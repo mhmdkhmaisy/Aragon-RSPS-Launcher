@@ -1,0 +1,56 @@
+PS C:\Users\mhmdk\OneDrive\Documents\GitHub\Aragon-RSPS-Launcher> npm run tauri:dev
+
+> aragon-launcher@1.0.0 tauri:dev
+> tauri dev
+
+     Running BeforeDevCommand (`npm run dev`)
+
+> aragon-launcher@1.0.0 dev
+> vite
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+  VITE v5.4.20  ready in 223 ms
+
+  ➜  Local:   http://localhost:5000/
+  ➜  Network: http://10.0.0.7:5000/
+        Info Watching C:\Users\mhmdk\OneDrive\Documents\GitHub\Aragon-RSPS-Launcher\src-tauri for changes...
+   Compiling aragon-launcher v1.0.0 (C:\Users\mhmdk\OneDrive\Documents\GitHub\Aragon-RSPS-Launcher\src-tauri)
+error: failed to run custom build command for `aragon-launcher v1.0.0 (C:\Users\mhmdk\OneDrive\Documents\GitHub\Aragon-RSPS-Launcher\src-tauri)`
+
+Caused by:
+  process didn't exit successfully: `C:\Users\mhmdk\OneDrive\Documents\GitHub\Aragon-RSPS-Launcher\src-tauri\target\debug\build\aragon-launcher-67d919d4c5c98501\build-script-build` (exit code: 1)
+  --- stdout
+  cargo:rerun-if-env-changed=TAURI_CONFIG
+  cargo:rerun-if-changed=tauri.conf.json
+  cargo:rustc-check-cfg=cfg(desktop)
+  cargo:rustc-cfg=desktop
+  cargo:rustc-check-cfg=cfg(mobile)
+  cargo:rustc-check-cfg=cfg(dev)
+  cargo:rustc-cfg=dev
+  cargo:rerun-if-changed=resources\jre\linux\bin\jaotc
+  cargo:rerun-if-changed=resources\jre\linux\bin\java
+  cargo:rerun-if-changed=resources\jre\linux\bin\jfr
+  cargo:rerun-if-changed=resources\jre\linux\bin\jjs
+  cargo:rerun-if-changed=resources\jre\linux\bin\jrunscript
+  cargo:rerun-if-changed=resources\jre\linux\bin\keytool
+  cargo:rerun-if-changed=resources\jre\linux\bin\pack200
+  cargo:rerun-if-changed=resources\jre\linux\bin\rmid
+  cargo:rerun-if-changed=resources\jre\linux\bin\rmiregistry
+  cargo:rerun-if-changed=resources\jre\linux\bin\unpack200
+  cargo:rerun-if-changed=resources\jre\linux\conf\logging.properties
+  cargo:rerun-if-changed=resources\jre\linux\conf\management\jmxremote.access
+  cargo:rerun-if-changed=resources\jre\linux\conf\management\jmxremote.password.template
+  cargo:rerun-if-changed=resources\jre\linux\conf\management\management.properties
+  cargo:rerun-if-changed=resources\jre\linux\conf\net.properties
+  cargo:rerun-if-changed=resources\jre\linux\conf\security\java.policy
+  cargo:rerun-if-changed=resources\jre\linux\conf\security\java.security
+  cargo:rerun-if-changed=resources\jre\linux\conf\security\policy\limited\default_local.policy
+  cargo:rerun-if-changed=resources\jre\linux\conf\security\policy\limited\default_US_export.policy
+  cargo:rerun-if-changed=resources\jre\linux\conf\security\policy\limited\exempt_local.policy
+  cargo:rerun-if-changed=resources\jre\linux\conf\security\policy\README.txt
+  cargo:rerun-if-changed=resources\jre\linux\conf\security\policy\unlimited\default_local.policy
+  cargo:rerun-if-changed=resources\jre\linux\conf\security\policy\unlimited\default_US_export.policy
+  cargo:rerun-if-changed=resources\jre\linux\conf\sound.properties
+  cargo:rerun-if-changed=resources\jre\linux\legal\java.base\ADDITIONAL_LICENSE_INFO
+  Access is denied. (os error 5)

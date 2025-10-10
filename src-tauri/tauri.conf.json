@@ -40,9 +40,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "resources": [
-        "resources/jre/*"
-      ],
+      "resources": [],
       "externalBin": [],
       "copyright": "Copyright © 2025 Aragon Studios",
       "category": "Game",
