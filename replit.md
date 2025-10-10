@@ -12,6 +12,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**October 10, 2025** - Enhanced launcher features
+- Added multi-client launch support (1-3 clients simultaneously)
+- Implemented configurable close delay with countdown (2-15 seconds)
+- Fixed console window visibility on Windows (launcher and game clients run without CMD window)
+- Added backward-compatible config system to preserve user settings during updates
+- Platform-specific JRE bundling using Tauri configuration files
+
 **October 10, 2025** - Migrated to Tauri architecture
 - Rebuilt launcher using Tauri (Rust + Web Technologies) for ultra-lightweight installers
 - Created modern web UI with HTML/CSS/JavaScript that previews in Replit
@@ -66,11 +73,16 @@ Preferred communication style: Simple, everyday language.
 - **Pros**: Bandwidth efficient, secure, familiar pattern (used by Minecraft, RuneLite)
 - **Cons**: Requires maintaining manifest file on server
 
-**JVM Configuration**
-- **Problem**: Users have different hardware capabilities and Java knowledge
-- **Solution**: Built-in JVM arguments configuration with memory allocation controls
-- **Implementation**: Rust-based config system with JSON persistence
-- **Benefit**: Power users can optimize performance while casual users get sensible defaults
+**JVM Configuration & Multi-Client Support**
+- **Problem**: Users have different hardware capabilities, Java knowledge, and may want to run multiple game clients
+- **Solution**: Built-in JVM arguments configuration with memory allocation controls and multi-client launch (1-3 clients)
+- **Implementation**: Rust-based config system with JSON persistence, backward-compatible deserialization
+- **Features**:
+  - Customizable JVM arguments for memory optimization
+  - Launch 1-3 game clients simultaneously with 500ms delay between launches
+  - Configurable close delay (2-15 seconds) with visual countdown
+  - No console windows on Windows (using CREATE_NO_WINDOW flag)
+- **Benefit**: Power users can optimize performance and run multiple clients while casual users get sensible defaults
 
 ### Distribution & Installation
 
