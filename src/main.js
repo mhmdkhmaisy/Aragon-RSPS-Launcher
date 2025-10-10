@@ -7,7 +7,9 @@ const isTauri = typeof window.__TAURI__ !== 'undefined';
 let invoke, appWindow;
 if (isTauri) {
     invoke = window.__TAURI__.invoke;
-    appWindow = window.__TAURI__.window.appWindow;
+    // Correct way to get the current window in Tauri v1
+    const { appWindow: currentWindow } = window.__TAURI__.window;
+    appWindow = currentWindow;
 }
 
 // DOM Elements
@@ -104,13 +106,19 @@ async function checkForUpdates() {
         statusText.classList.add('loading');
         
         if (isTauri) {
-            // Call Rust backend
-            const updateInfo = await invoke('check_for_updates');
-            
-            if (updateInfo.updateAvailable) {
-                await downloadUpdate(updateInfo);
-            } else {
-                updateStatus('Ready to play!');
+            try {
+                // Call Rust backend with timeout
+                const updateInfo = await invoke('check_for_updates');
+                
+                if (updateInfo.updateAvailable) {
+                    await downloadUpdate(updateInfo);
+                } else {
+                    updateStatus('Ready to play!');
+                    playButton.disabled = false;
+                }
+            } catch (invokeError) {
+                console.error('Tauri invoke failed:', invokeError);
+                updateStatus('Update check failed - Ready to play anyway');
                 playButton.disabled = false;
             }
         } else {
@@ -223,9 +231,21 @@ function updateStatus(message) {
 // Event listeners
 function setupEventListeners() {
     // Window controls
-    if (isTauri) {
-        minimizeBtn.addEventListener('click', () => appWindow.minimize());
-        closeBtn.addEventListener('click', () => appWindow.close());
+    if (isTauri && appWindow) {
+        minimizeBtn.addEventListener('click', async () => {
+            try {
+                await appWindow.minimize();
+            } catch (e) {
+                console.error('Failed to minimize:', e);
+            }
+        });
+        closeBtn.addEventListener('click', async () => {
+            try {
+                await appWindow.close();
+            } catch (e) {
+                console.error('Failed to close:', e);
+            }
+        });
     } else {
         minimizeBtn.style.display = 'none';
         closeBtn.style.display = 'none';
@@ -234,31 +254,48 @@ function setupEventListeners() {
     // Play button
     playButton.addEventListener('click', launchGame);
     
-    // Settings
-    settingsButton.addEventListener('click', () => {
-        settingsModal.classList.add('active');
-    });
+    // Settings - ensure it's not null and add event listener
+    if (settingsButton) {
+        settingsButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Settings button clicked');
+            if (settingsModal) {
+                settingsModal.classList.add('active');
+            }
+        });
+    }
     
-    document.getElementById('closeSettings').addEventListener('click', () => {
-        settingsModal.classList.remove('active');
-    });
+    const closeSettingsBtn = document.getElementById('closeSettings');
+    if (closeSettingsBtn) {
+        closeSettingsBtn.addEventListener('click', () => {
+            settingsModal.classList.remove('active');
+        });
+    }
     
-    document.getElementById('cancelSettings').addEventListener('click', () => {
-        settingsModal.classList.remove('active');
-        loadConfig(); // Reset to saved values
-    });
+    const cancelSettingsBtn = document.getElementById('cancelSettings');
+    if (cancelSettingsBtn) {
+        cancelSettingsBtn.addEventListener('click', () => {
+            settingsModal.classList.remove('active');
+            loadConfig(); // Reset to saved values
+        });
+    }
     
-    document.getElementById('saveSettings').addEventListener('click', async () => {
-        await saveConfig();
-        settingsModal.classList.remove('active');
-    });
+    const saveSettingsBtn = document.getElementById('saveSettings');
+    if (saveSettingsBtn) {
+        saveSettingsBtn.addEventListener('click', async () => {
+            await saveConfig();
+            settingsModal.classList.remove('active');
+        });
+    }
     
     // Close modal on outside click
-    settingsModal.addEventListener('click', (e) => {
-        if (e.target === settingsModal) {
-            settingsModal.classList.remove('active');
-        }
-    });
+    if (settingsModal) {
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.remove('active');
+            }
+        });
+    }
 }
 
 // Utility

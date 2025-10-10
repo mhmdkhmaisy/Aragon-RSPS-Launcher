@@ -108,8 +108,15 @@ fn save_config(config: Config) -> Result<(), String> {
 async fn check_for_updates() -> Result<UpdateInfo, String> {
     const MANIFEST_URL: &str = "https://cdn.aragonrsps.com/manifest.json";
     
+    // Create client with timeout
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(10))
+        .build()
+        .map_err(|e| format!("Failed to create client: {}", e))?;
+    
     // Fetch remote manifest
-    let remote_manifest: Manifest = reqwest::get(MANIFEST_URL)
+    let remote_manifest: Manifest = client.get(MANIFEST_URL)
+        .send()
         .await
         .map_err(|e| format!("Failed to fetch manifest: {}", e))?
         .json()
