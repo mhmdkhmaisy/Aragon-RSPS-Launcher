@@ -184,13 +184,16 @@ async function launchGame() {
 // Simulate update check (browser preview)
 async function simulateUpdateCheck() {
     await sleep(1500);
-    const hasUpdate = Math.random() > 0.5;
+    const hasUpdate = Math.random() > 0.7;
     
     if (hasUpdate) {
+        updateStatus('Downloading update...');
         await simulateDownload();
+        updateStatus('Update complete - Ready to play!');
+    } else {
+        updateStatus('Ready to play!');
     }
     
-    updateStatus('Ready to play!');
     playButton.disabled = false;
 }
 
