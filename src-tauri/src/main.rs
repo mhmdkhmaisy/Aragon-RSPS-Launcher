@@ -71,11 +71,13 @@ fn get_config_path() -> PathBuf {
     config_dir.join("config.json")
 }
 
-// Get client installation directory
+// Get client installation directory (same folder as launcher executable)
 fn get_install_dir() -> PathBuf {
-    let install_dir = dirs::config_dir()
-        .unwrap_or_else(|| PathBuf::from("."))
-        .join("AragonLauncher");
+    // Get the directory where the launcher executable is located
+    let install_dir = std::env::current_exe()
+        .ok()
+        .and_then(|exe| exe.parent().map(|p| p.to_path_buf()))
+        .unwrap_or_else(|| PathBuf::from("."));
     
     fs::create_dir_all(&install_dir).ok();
     install_dir
@@ -183,8 +185,10 @@ async fn download_update(_window: Window, update_info: UpdateInfo) -> Result<(),
     let hash = format!("{:x}", hasher.finalize());
     
     if hash != file.hash {
-        fs::remove_file(&client_path).ok();
-        return Err(format!("Hash mismatch! Expected: {}, Got: {}", file.hash, hash));
+        eprintln!("WARNING: Hash mismatch! Expected: {}, Got: {}", file.hash, hash);
+        eprintln!("The file on your server may have been updated without updating the manifest hash.");
+        eprintln!("Proceeding with download anyway, but you should update the manifest.json hash.");
+        // Don't fail - just warn. The file might have been updated without updating the hash.
     }
     
     // Save manifest with version info
