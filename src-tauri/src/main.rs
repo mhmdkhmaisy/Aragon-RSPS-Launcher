@@ -47,7 +47,8 @@ struct LatestVersions {
 struct FileEntry {
     os: String,
     version: String,
-    url: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    url: Option<String>,
     size: u64,
     hash: String,
     changelog: Option<String>,
@@ -160,13 +161,18 @@ async fn check_for_updates() -> Result<UpdateInfo, String> {
 // Download update
 #[tauri::command]
 async fn download_update(_window: Window, update_info: UpdateInfo) -> Result<(), String> {
+    const BASE_URL: &str = "http://127.0.0.1:8000";
+    
     let file = update_info.file.clone()
         .ok_or("No file entry found")?;
     
     let client_path = get_install_dir().join("client.jar");
     
+    // Build download URL from os and version
+    let download_url = format!("{}/download/{}/{}", BASE_URL, file.os, file.version);
+    
     // Download file
-    let response = reqwest::get(&file.url)
+    let response = reqwest::get(&download_url)
         .await
         .map_err(|e| format!("Download failed: {}", e))?;
     
