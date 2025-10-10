@@ -187,11 +187,18 @@ async function launchGame() {
                 jvmArgs: config.jvmArgs 
             });
             
-            playButtonText.textContent = 'RUNNING';
-            updateStatus('Client is running');
+            playButtonText.textContent = 'LAUNCHED';
+            updateStatus('Client launched successfully');
             
             if (config.closeOnLaunch) {
                 await appWindow.close();
+            } else {
+                // Re-enable play button after 2 seconds for multiple sessions
+                setTimeout(() => {
+                    playButton.disabled = false;
+                    playButtonText.textContent = 'PLAY';
+                    updateStatus('Ready to play!');
+                }, 2000);
             }
         } else {
             // Browser preview - show message
