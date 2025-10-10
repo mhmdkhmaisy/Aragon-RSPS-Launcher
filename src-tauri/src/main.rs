@@ -294,10 +294,18 @@ fn launch_client(jvm_args: String) -> Result<(), String> {
     args.push("-jar".to_string());
     args.push(client_jar.to_string_lossy().to_string());
     
-    Command::new(&java_path)
-        .args(&args)
-        .current_dir(get_install_dir())
-        .spawn()
+    let mut command = Command::new(&java_path);
+    command.args(&args).current_dir(get_install_dir());
+    
+    // Hide console window on Windows
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        command.creation_flags(CREATE_NO_WINDOW);
+    }
+    
+    command.spawn()
         .map_err(|e| format!("Failed to launch client with {}: {}", java_path, e))?;
     
     Ok(())
