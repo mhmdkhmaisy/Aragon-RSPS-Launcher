@@ -266,7 +266,8 @@ body {
     color: #cccccc;
 }
 
-.setting-item input[type="text"] {
+.setting-item input[type="text"],
+.setting-item input[type="number"] {
     width: 100%;
     padding: 10px;
     background: #000000;
@@ -276,7 +277,8 @@ body {
     font-size: 14px;
 }
 
-.setting-item input[type="text"]:focus {
+.setting-item input[type="text"]:focus,
+.setting-item input[type="number"]:focus {
     outline: none;
     border-color: #FF0000;
 }
@@ -284,6 +286,45 @@ body {
 .setting-item input[type="checkbox"] {
     margin-right: 8px;
     accent-color: #FF0000;
+}
+
+.setting-item input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: #000000;
+    border: 1px solid #8B0000;
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+    margin-top: 8px;
+}
+
+.setting-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(to bottom, #CC0000, #8B0000);
+    border: 2px solid #FF0000;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.setting-item input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(to bottom, #CC0000, #8B0000);
+    border: 2px solid #FF0000;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.setting-item input[type="range"]::-webkit-slider-thumb:hover {
+    background: linear-gradient(to bottom, #FF0000, #CC0000);
+}
+
+.setting-item input[type="range"]::-moz-range-thumb:hover {
+    background: linear-gradient(to bottom, #FF0000, #CC0000);
 }
 
 .modal-footer {

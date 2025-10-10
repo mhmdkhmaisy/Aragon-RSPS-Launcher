@@ -18,10 +18,18 @@ struct Config {
     auto_update: bool,
     #[serde(rename = "autoLaunch")]
     auto_launch: bool,
-    #[serde(rename = "clientCount")]
+    #[serde(rename = "clientCount", default = "default_client_count")]
     client_count: u8,
-    #[serde(rename = "closeDelay")]
+    #[serde(rename = "closeDelay", default = "default_close_delay")]
     close_delay: u8,
+}
+
+fn default_client_count() -> u8 {
+    1
+}
+
+fn default_close_delay() -> u8 {
+    5
 }
 
 impl Default for Config {
