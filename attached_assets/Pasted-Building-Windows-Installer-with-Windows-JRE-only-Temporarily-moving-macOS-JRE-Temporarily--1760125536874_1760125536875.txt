@@ -1,0 +1,383 @@
+Building Windows Installer with Windows JRE only...
+
+Temporarily moving macOS JRE...
+Temporarily moving Linux JRE...
+
+Building installer...
+
+> aragon-launcher@1.0.0 tauri:build
+> tauri build
+
+     Running beforeBuildCommand `npm run build`
+
+> aragon-launcher@1.0.0 build
+> vite build
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+vite v5.4.20 building for production...
+✓ 4 modules transformed.
+dist/index.html                   3.78 kB │ gzip: 1.06 kB
+dist/assets/icon-4IjzYg0r.png   524.14 kB
+dist/assets/index-C2A8rvL5.css    4.08 kB │ gzip: 1.33 kB
+dist/assets/index-D_kE4xDE.js     5.16 kB │ gzip: 1.86 kB
+✓ built in 122ms
+   Compiling wry v0.24.11
+   Compiling tauri-runtime v0.14.6
+   Compiling aragon-launcher v1.0.0 (C:\Users\mhmdk\OneDrive\Documents\GitHub\Aragon-RSPS-Launcher\src-tauri)
+   Compiling tauri-runtime-wry v0.14.11
+error: failed to run custom build command for `aragon-launcher v1.0.0 (C:\Users\mhmdk\OneDrive\Documents\GitHub\Aragon-RSPS-Launcher\src-tauri)`
+
+Caused by:
+  process didn't exit successfully: `C:\Users\mhmdk\OneDrive\Documents\GitHub\Aragon-RSPS-Launcher\src-tauri\target\release\build\aragon-launcher-a20fff56974264f9\build-script-build` (exit code: 1)
+  --- stdout
+  cargo:rerun-if-env-changed=TAURI_CONFIG
+  cargo:rerun-if-changed=tauri.conf.json
+  cargo:rustc-check-cfg=cfg(desktop)
+  cargo:rustc-cfg=desktop
+  cargo:rustc-check-cfg=cfg(mobile)
+  cargo:rustc-check-cfg=cfg(dev)
+  cargo:rerun-if-changed=resources\jre\windows\NOTICE
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-console-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-console-l1-2-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-datetime-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-debug-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-errorhandling-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-fibers-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-fibers-l1-1-1.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-file-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-file-l1-2-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-file-l2-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-handle-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-heap-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-interlocked-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-kernel32-legacy-l1-1-1.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-libraryloader-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-localization-l1-2-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-memory-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-namedpipe-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-processenvironment-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-processthreads-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-processthreads-l1-1-1.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-profile-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-rtlsupport-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-string-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-synch-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-synch-l1-2-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-sysinfo-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-sysinfo-l1-2-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-timezone-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-core-util-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-conio-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-convert-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-environment-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-filesystem-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-heap-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-locale-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-math-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-multibyte-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-private-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-process-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-runtime-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-stdio-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-string-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-time-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\api-ms-win-crt-utility-l1-1-0.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\awt.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\client\jvm.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\dt_socket.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\fontmanager.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\freetype.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\instrument.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\j2gss.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\j2pcsc.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\j2pkcs11.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\jaas.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\jabswitch.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\jaccessinspector.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\jaccesswalker.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\jaotc.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\java.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\java.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\javaaccessbridge.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\javajpeg.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\javaw.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\jawt.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\jdwp.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\jfr.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\jimage.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\jjs.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\jli.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\jrunscript.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\jsound.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\keytool.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\kinit.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\klist.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\ktab.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\lcms.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\le.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\management.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\management_agent.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\management_ext.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\mlib_image.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\msvcp140.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\net.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\nio.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\pack200.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\prefs.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\rmi.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\rmid.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\rmiregistry.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\server\jvm.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\splashscreen.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\sspi_bridge.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\sunec.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\sunmscapi.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\ucrtbase.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\unpack.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\unpack200.exe
+  cargo:rerun-if-changed=resources\jre\windows\bin\vcruntime140.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\vcruntime140_1.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\verify.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\w2k_lsa_auth.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\windowsaccessbridge-64.dll
+  cargo:rerun-if-changed=resources\jre\windows\bin\zip.dll
+  cargo:rerun-if-changed=resources\jre\windows\conf\logging.properties
+  cargo:rerun-if-changed=resources\jre\windows\conf\management\jmxremote.access
+  cargo:rerun-if-changed=resources\jre\windows\conf\management\jmxremote.password.template
+  cargo:rerun-if-changed=resources\jre\windows\conf\management\management.properties
+  cargo:rerun-if-changed=resources\jre\windows\conf\net.properties
+  cargo:rerun-if-changed=resources\jre\windows\conf\security\java.policy
+  cargo:rerun-if-changed=resources\jre\windows\conf\security\java.security
+  cargo:rerun-if-changed=resources\jre\windows\conf\security\policy\limited\default_local.policy
+  cargo:rerun-if-changed=resources\jre\windows\conf\security\policy\limited\default_US_export.policy
+  cargo:rerun-if-changed=resources\jre\windows\conf\security\policy\limited\exempt_local.policy
+  cargo:rerun-if-changed=resources\jre\windows\conf\security\policy\README.txt
+  cargo:rerun-if-changed=resources\jre\windows\conf\security\policy\unlimited\default_local.policy
+  cargo:rerun-if-changed=resources\jre\windows\conf\security\policy\unlimited\default_US_export.policy
+  cargo:rerun-if-changed=resources\jre\windows\conf\sound.properties
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\aes.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\asm.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\c-libutl.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\cldr.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\icu.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\public_suffix.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\siphash.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\unicode.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.base\zlib.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.compiler\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.compiler\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.compiler\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.datatransfer\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.datatransfer\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.datatransfer\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\colorimaging.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\freetype.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\giflib.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\harfbuzz.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\jpeg.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\lcms.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\libpng.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.desktop\mesa3d.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.instrument\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.instrument\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.instrument\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.logging\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.logging\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.logging\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.management\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.management\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.management\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.management.rmi\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.management.rmi\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.management.rmi\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.naming\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.naming\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.naming\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.net.http\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.net.http\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.net.http\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.prefs\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.prefs\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.prefs\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.rmi\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.rmi\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.rmi\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.scripting\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.scripting\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.scripting\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.se\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.se\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.se\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.security.jgss\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.security.jgss\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.security.jgss\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.security.sasl\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.security.sasl\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.security.sasl\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.smartcardio\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.smartcardio\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.smartcardio\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.sql\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.sql\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.sql\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.sql.rowset\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.sql.rowset\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.sql.rowset\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.transaction.xa\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.transaction.xa\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.transaction.xa\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml\bcel.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml\dom.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml\jcup.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml\xalan.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml\xerces.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml.crypto\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml.crypto\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml.crypto\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\java.xml.crypto\santuario.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.accessibility\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.accessibility\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.accessibility\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.aot\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.aot\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.aot\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.charsets\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.charsets\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.charsets\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.cryptoki\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.cryptoki\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.cryptoki\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.cryptoki\pkcs11cryptotoken.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.cryptoki\pkcs11wrapper.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.ec\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.ec\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.ec\ecc.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.ec\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.mscapi\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.mscapi\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.crypto.mscapi\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.dynalink\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.dynalink\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.dynalink\dynalink.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.dynalink\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.httpserver\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.httpserver\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.httpserver\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.ed\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.ed\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.ed\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.le\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.le\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.le\jline.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.le\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.ci\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.ci\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.ci\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.compiler\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.compiler\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.compiler\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.compiler.management\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.compiler.management\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.internal.vm.compiler.management\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jdwp.agent\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jdwp.agent\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jdwp.agent\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jfr\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jfr\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jfr\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jsobject\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jsobject\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.jsobject\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.localedata\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.localedata\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.localedata\cldr.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.localedata\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.localedata\thaidict.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management.agent\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management.agent\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management.agent\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management.jfr\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management.jfr\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.management.jfr\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.dns\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.dns\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.dns\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.ldap\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.ldap\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.ldap\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.rmi\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.rmi\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.naming.rmi\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.net\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.net\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.net\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.pack\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.pack\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.pack\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.scripting.nashorn\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.scripting.nashorn\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.scripting.nashorn\double-conversion.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.scripting.nashorn\joni.md
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.scripting.nashorn\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.scripting.nashorn.shell\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.scripting.nashorn.shell\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.scripting.nashorn.shell\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.sctp\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.sctp\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.sctp\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.security.auth\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.security.auth\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.security.auth\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.security.jgss\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.security.jgss\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.security.jgss\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.unsupported\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.unsupported\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.unsupported\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.xml.dom\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.xml.dom\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.xml.dom\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.zipfs\ADDITIONAL_LICENSE_INFO
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.zipfs\ASSEMBLY_EXCEPTION
+  cargo:rerun-if-changed=resources\jre\windows\legal\jdk.zipfs\LICENSE
+  cargo:rerun-if-changed=resources\jre\windows\lib\classlist
+  cargo:rerun-if-changed=resources\jre\windows\lib\client\Xusage.txt
+  cargo:rerun-if-changed=resources\jre\windows\lib\fontconfig.bfc
+  cargo:rerun-if-changed=resources\jre\windows\lib\fontconfig.properties.src
+  cargo:rerun-if-changed=resources\jre\windows\lib\jawt.lib
+  cargo:rerun-if-changed=resources\jre\windows\lib\jfr\default.jfc
+  cargo:rerun-if-changed=resources\jre\windows\lib\jfr\profile.jfc
+  cargo:rerun-if-changed=resources\jre\windows\lib\jrt-fs.jar
+  cargo:rerun-if-changed=resources\jre\windows\lib\jvm.cfg
+  cargo:rerun-if-changed=resources\jre\windows\lib\jvm.lib
+  cargo:rerun-if-changed=resources\jre\windows\lib\modules
+  cargo:rerun-if-changed=resources\jre\windows\lib\psfont.properties.ja
+  cargo:rerun-if-changed=resources\jre\windows\lib\psfontj2d.properties
+  cargo:rerun-if-changed=resources\jre\windows\lib\security\blocked.certs
+  cargo:rerun-if-changed=resources\jre\windows\lib\security\cacerts
+  cargo:rerun-if-changed=resources\jre\windows\lib\security\default.policy
+  cargo:rerun-if-changed=resources\jre\windows\lib\security\public_suffix_list.dat
+  cargo:rerun-if-changed=resources\jre\windows\lib\server\Xusage.txt
+  cargo:rerun-if-changed=resources\jre\windows\lib\tzdb.dat
+  cargo:rerun-if-changed=resources\jre\windows\lib\tzmappings
+  cargo:rerun-if-changed=resources\jre\windows\release
+  path matching resources/jre/macos/* not found.
+warning: build failed, waiting for other jobs to finish...
+       Error failed to build app: failed to build app
+Restoring macOS JRE...
+Restoring Linux JRE...
+
+Windows installer built successfully!
+Location: src-tauri\target\release\bundle\msi\
