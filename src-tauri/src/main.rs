@@ -211,6 +211,48 @@ async fn download_update(window: Window, update_info: UpdateInfo) -> Result<(), 
     Ok(())
 }
 
+// Get bundled JRE path
+fn get_bundled_jre_path() -> Option<PathBuf> {
+    // Try to get the resource directory from Tauri
+    let resource_dir = std::env::current_exe()
+        .ok()?
+        .parent()?
+        .join("resources")
+        .join("jre");
+    
+    // Platform-specific JRE location
+    let platform_jre = if cfg!(target_os = "windows") {
+        resource_dir.join("windows").join("bin").join("java.exe")
+    } else if cfg!(target_os = "macos") {
+        resource_dir.join("macos").join("bin").join("java")
+    } else if cfg!(target_os = "linux") {
+        resource_dir.join("linux").join("bin").join("java")
+    } else {
+        return None;
+    };
+    
+    if platform_jre.exists() {
+        Some(platform_jre)
+    } else {
+        None
+    }
+}
+
+// Get Java executable path (bundled or system)
+fn get_java_executable() -> String {
+    // First, try to use bundled JRE
+    if let Some(bundled_java) = get_bundled_jre_path() {
+        return bundled_java.to_string_lossy().to_string();
+    }
+    
+    // Fallback to system Java
+    if cfg!(target_os = "windows") {
+        "java.exe".to_string()
+    } else {
+        "java".to_string()
+    }
+}
+
 // Launch client
 #[tauri::command]
 fn launch_client(jvm_args: String) -> Result<(), String> {
@@ -220,11 +262,7 @@ fn launch_client(jvm_args: String) -> Result<(), String> {
         return Err("Client JAR not found".to_string());
     }
     
-    let java_path = if cfg!(target_os = "windows") {
-        "java.exe"
-    } else {
-        "java"
-    };
+    let java_path = get_java_executable();
     
     let mut args: Vec<String> = jvm_args
         .split_whitespace()
@@ -234,11 +272,11 @@ fn launch_client(jvm_args: String) -> Result<(), String> {
     args.push("-jar".to_string());
     args.push(client_jar.to_string_lossy().to_string());
     
-    Command::new(java_path)
+    Command::new(&java_path)
         .args(&args)
         .current_dir(get_install_dir())
         .spawn()
-        .map_err(|e| format!("Failed to launch client: {}", e))?;
+        .map_err(|e| format!("Failed to launch client with {}: {}", java_path, e))?;
     
     Ok(())
 }

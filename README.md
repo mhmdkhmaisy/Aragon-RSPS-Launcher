@@ -71,11 +71,16 @@ Find installer in `src-tauri/target/release/bundle/`
 - ✅ Node.js 18+
 - ✅ Platform-specific build tools (see [BUILD.md](BUILD.md))
 
+### For End Users (After Installation):
+- ✅ **No requirements!** The launcher can bundle JRE
+- ⚠️ Or Java 11+ if you don't bundle JRE
+
 ---
 
 ## 📖 Documentation
 
 - **[BUILD.md](BUILD.md)** - Complete build instructions for all platforms
+- **[BUNDLED_JRE.md](BUNDLED_JRE.md)** - How to bundle Java with the launcher (no Java install needed!)
 - **[Tauri Docs](https://tauri.app/)** - Official Tauri documentation
 
 ---
