@@ -40,11 +40,11 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "resources": [
-        "resources/jre/windows/*",
-        "resources/jre/macos/*",
-        "resources/jre/linux/*"
-      ],
+      "resources": {
+        "windows": ["resources/jre/windows/*"],
+        "macos": ["resources/jre/macos/*"],
+        "linux": ["resources/jre/linux/*"]
+      },
       "externalBin": [],
       "copyright": "Copyright © 2025 Aragon Studios",
       "category": "Game",
