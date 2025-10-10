@@ -60,28 +60,47 @@ npm run tauri:dev
 
 ### Production Build
 
+**Important:** Use the platform-specific build scripts to create smaller installers with only the necessary JRE.
+
 #### Windows Installer (.msi)
 ```bash
 npm install
-npm run tauri:build
+build-windows.bat
 ```
 Output: `src-tauri/target/release/bundle/msi/Aragon Launcher_1.0.0_x64_en-US.msi`
+
+**What it does:**
+- Temporarily moves macOS and Linux JRE folders
+- Builds installer with only Windows JRE
+- Restores other JRE folders after build
 
 #### macOS Installer (.dmg)
 ```bash
 npm install
-npm run tauri:build
+chmod +x build-macos.sh
+./build-macos.sh
 ```
 Output: `src-tauri/target/release/bundle/dmg/Aragon Launcher_1.0.0_x64.dmg`
+
+**What it does:**
+- Temporarily moves Windows and Linux JRE folders
+- Builds installer with only macOS JRE
+- Restores other JRE folders after build
 
 #### Linux Installer (.deb / .AppImage)
 ```bash
 npm install
-npm run tauri:build
+chmod +x build-linux.sh
+./build-linux.sh
 ```
 Output: 
 - `src-tauri/target/release/bundle/deb/aragon-launcher_1.0.0_amd64.deb`
 - `src-tauri/target/release/bundle/appimage/aragon-launcher_1.0.0_amd64.AppImage`
+
+**What it does:**
+- Temporarily moves Windows and macOS JRE folders
+- Builds installer with only Linux JRE
+- Restores other JRE folders after build
 
 ## Build Features
 
