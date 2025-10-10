@@ -1,5 +1,7 @@
 {
-  "bundle": {
-    "resources": ["resources/jre/windows/*"]
+  "tauri": {
+    "bundle": {
+      "resources": ["resources/jre/windows/*"]
+    }
   }
 }

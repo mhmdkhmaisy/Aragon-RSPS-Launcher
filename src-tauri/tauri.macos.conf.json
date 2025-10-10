@@ -1,5 +1,7 @@
 {
-  "bundle": {
-    "resources": ["resources/jre/macos/*"]
+  "tauri": {
+    "bundle": {
+      "resources": ["resources/jre/macos/*"]
+    }
   }
 }

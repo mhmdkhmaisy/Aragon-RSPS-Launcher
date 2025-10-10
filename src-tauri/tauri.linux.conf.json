@@ -1,5 +1,7 @@
 {
-  "bundle": {
-    "resources": ["resources/jre/linux/*"]
+  "tauri": {
+    "bundle": {
+      "resources": ["resources/jre/linux/*"]
+    }
   }
 }
