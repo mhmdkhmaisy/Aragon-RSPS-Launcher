@@ -111,7 +111,7 @@ fn save_config(config: Config) -> Result<(), String> {
 // Check for updates
 #[tauri::command]
 async fn check_for_updates() -> Result<UpdateInfo, String> {
-    const MANIFEST_URL: &str = "https://cdn.aragonrsps.com/manifest.json";
+    const MANIFEST_URL: &str = "http://127.0.0.1:8000/manifest.json";
     
     // Create client with timeout
     let client = reqwest::Client::builder()
