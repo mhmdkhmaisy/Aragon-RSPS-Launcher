@@ -138,7 +138,7 @@ async fn check_for_updates() -> Result<UpdateInfo, String> {
     // Check local version
     let local_manifest_path = get_install_dir().join("manifest.json");
     let local_version = if let Ok(content) = fs::read_to_string(&local_manifest_path) {
-        if let Ok(local: Manifest) = serde_json::from_str(&content) {
+        if let Ok(local) = serde_json::from_str::<Manifest>(&content) {
             match os {
                 "windows" => local.latest.windows.as_ref(),
                 "macos" => local.latest.macos.as_ref(),
@@ -169,8 +169,8 @@ async fn check_for_updates() -> Result<UpdateInfo, String> {
 
 // Download update
 #[tauri::command]
-async fn download_update(window: Window, update_info: UpdateInfo) -> Result<(), String> {
-    let file = update_info.file
+async fn download_update(_window: Window, update_info: UpdateInfo) -> Result<(), String> {
+    let file = update_info.file.clone()
         .ok_or("No file entry found")?;
     
     let client_path = get_install_dir().join("client.jar");
@@ -180,8 +180,6 @@ async fn download_update(window: Window, update_info: UpdateInfo) -> Result<(), 
         .await
         .map_err(|e| format!("Download failed: {}", e))?;
     
-    let total_size = file.size;
-    let mut downloaded: u64 = 0;
     let bytes = response.bytes()
         .await
         .map_err(|e| format!("Failed to read bytes: {}", e))?;
