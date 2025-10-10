@@ -7,9 +7,8 @@ const isTauri = typeof window.__TAURI__ !== 'undefined';
 let invoke, appWindow;
 if (isTauri) {
     invoke = window.__TAURI__.invoke;
-    // Correct way to get the current window in Tauri v1
-    const { appWindow: currentWindow } = window.__TAURI__.window;
-    appWindow = currentWindow;
+    // Get the current window using getCurrent() method
+    appWindow = window.__TAURI__.window.getCurrent();
 }
 
 // DOM Elements
@@ -258,7 +257,6 @@ function setupEventListeners() {
     if (settingsButton) {
         settingsButton.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('Settings button clicked');
             if (settingsModal) {
                 settingsModal.classList.add('active');
             }
