@@ -115,7 +115,7 @@ fn save_config(config: Config) -> Result<(), String> {
 // Check for updates
 #[tauri::command]
 async fn check_for_updates() -> Result<UpdateInfo, String> {
-    const MANIFEST_URL: &str = "https://cdn.aragonrsps.com/manifest.json";
+    const MANIFEST_URL: &str = "https://aragon-data.live/manifest.json";
     
     // Create client with timeout
     let client = reqwest::Client::builder()
@@ -164,7 +164,7 @@ async fn check_for_updates() -> Result<UpdateInfo, String> {
 // Download update
 #[tauri::command]
 async fn download_update(_window: Window, update_info: UpdateInfo) -> Result<(), String> {
-    const BASE_URL: &str = "https://cdn.aragonrsps.com";
+    const BASE_URL: &str = "https://aragon-data.live";
     
     let file = update_info.file.clone()
         .ok_or("No file entry found")?;
