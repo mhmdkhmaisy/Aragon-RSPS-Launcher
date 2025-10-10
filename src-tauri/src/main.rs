@@ -18,6 +18,10 @@ struct Config {
     auto_update: bool,
     #[serde(rename = "autoLaunch")]
     auto_launch: bool,
+    #[serde(rename = "clientCount")]
+    client_count: u8,
+    #[serde(rename = "closeDelay")]
+    close_delay: u8,
 }
 
 impl Default for Config {
@@ -27,6 +31,8 @@ impl Default for Config {
             close_on_launch: false,
             auto_update: true,
             auto_launch: true,
+            client_count: 1,
+            close_delay: 5,
         }
     }
 }
