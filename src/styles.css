@@ -254,7 +254,7 @@ body {
 
 .modal-body {
     padding: 20px;
-    max-height: 400px;
+    max-height: 320px;
     overflow-y: auto;
 }
 
@@ -381,4 +381,47 @@ body {
 
 .status-text.loading {
     animation: pulse 2s infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 12px; /* Adjust width for vertical scrollbar */
+    height: 12px; /* Adjust height for horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #1a0000; /* Dark background for the track */
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #8B0000, #FF0000); /* Gradient for the thumb */
+    border-radius: 6px;
+    border: 3px solid #000000; /* Border to separate thumb from the track */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #FF0000, #CC0000); /* Highlight thumb on hover */
+}
+
+::-webkit-scrollbar-button {
+    background: transparent;
+    display: none; /* Hide the arrows */
+}
+
+/* Optional: Customizing scrollbar for the modal as well */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #1a0000;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #8B0000, #FF0000);
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #FF0000, #CC0000);
 }
