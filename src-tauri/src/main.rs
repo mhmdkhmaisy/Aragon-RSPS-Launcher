@@ -10,8 +10,11 @@ use tauri::Window;
 // Configuration
 #[derive(Debug, Serialize, Deserialize, Clone)]
 struct Config {
+    #[serde(rename = "jvmArgs")]
     jvm_args: String,
+    #[serde(rename = "minimizeToTray")]
     minimize_to_tray: bool,
+    #[serde(rename = "autoUpdate")]
     auto_update: bool,
 }
 
@@ -123,35 +126,14 @@ async fn check_for_updates() -> Result<UpdateInfo, String> {
         .await
         .map_err(|e| format!("Failed to parse manifest: {}", e))?;
     
-    // Determine OS
-    let os = if cfg!(target_os = "windows") {
-        "windows"
-    } else if cfg!(target_os = "macos") {
-        "macos"
-    } else if cfg!(target_os = "linux") {
-        "linux"
-    } else {
-        "standalone"
-    };
-    
-    // Get version for this OS
-    let remote_version = match os {
-        "windows" => remote_manifest.latest.windows.as_ref(),
-        "macos" => remote_manifest.latest.macos.as_ref(),
-        "linux" => remote_manifest.latest.linux.as_ref(),
-        _ => None,
-    }.unwrap_or(&remote_manifest.latest.standalone);
+    // Always use standalone version
+    let remote_version = &remote_manifest.latest.standalone;
     
     // Check local version
     let local_manifest_path = get_install_dir().join("manifest.json");
     let local_version = if let Ok(content) = fs::read_to_string(&local_manifest_path) {
         if let Ok(local) = serde_json::from_str::<Manifest>(&content) {
-            match os {
-                "windows" => local.latest.windows.as_ref(),
-                "macos" => local.latest.macos.as_ref(),
-                "linux" => local.latest.linux.as_ref(),
-                _ => None,
-            }.unwrap_or(&local.latest.standalone).clone()
+            local.latest.standalone.clone()
         } else {
             String::new()
         }
@@ -161,10 +143,9 @@ async fn check_for_updates() -> Result<UpdateInfo, String> {
     
     let update_available = remote_version != &local_version || !get_install_dir().join("client.jar").exists();
     
-    // Find file entry for this OS
+    // Always find the standalone JAR file
     let file = remote_manifest.files.iter()
-        .find(|f| f.os == os)
-        .or_else(|| remote_manifest.files.iter().find(|f| f.os == "standalone"))
+        .find(|f| f.os == "standalone")
         .cloned();
     
     Ok(UpdateInfo {
@@ -206,9 +187,18 @@ async fn download_update(_window: Window, update_info: UpdateInfo) -> Result<(),
         return Err(format!("Hash mismatch! Expected: {}, Got: {}", file.hash, hash));
     }
     
-    // Save manifest
+    // Save manifest with version info
     let manifest_path = get_install_dir().join("manifest.json");
-    let manifest_json = serde_json::to_string_pretty(&update_info)
+    let local_manifest = Manifest {
+        latest: LatestVersions {
+            standalone: update_info.version.clone(),
+            windows: None,
+            macos: None,
+            linux: None,
+        },
+        files: vec![file.clone()],
+    };
+    let manifest_json = serde_json::to_string_pretty(&local_manifest)
         .map_err(|e| e.to_string())?;
     fs::write(&manifest_path, manifest_json)
         .map_err(|e| e.to_string())?;
