@@ -283,12 +283,15 @@ fn get_java_executable() -> String {
 
 // Launch client
 #[tauri::command]
-fn launch_client(jvm_args: String) -> Result<(), String> {
+fn launch_client(jvm_args: String, client_count: u8) -> Result<(), String> {
     let client_jar = get_install_dir().join("client.jar");
     
     if !client_jar.exists() {
         return Err("Client JAR not found".to_string());
     }
+    
+    // Validate client count (1-3)
+    let count = client_count.clamp(1, 3);
     
     let java_path = get_java_executable();
     
@@ -300,19 +303,27 @@ fn launch_client(jvm_args: String) -> Result<(), String> {
     args.push("-jar".to_string());
     args.push(client_jar.to_string_lossy().to_string());
     
-    let mut command = Command::new(&java_path);
-    command.args(&args).current_dir(get_install_dir());
-    
-    // Hide console window on Windows
-    #[cfg(target_os = "windows")]
-    {
-        use std::os::windows::process::CommandExt;
-        const CREATE_NO_WINDOW: u32 = 0x08000000;
-        command.creation_flags(CREATE_NO_WINDOW);
+    // Launch multiple clients
+    for i in 0..count {
+        let mut command = Command::new(&java_path);
+        command.args(&args).current_dir(get_install_dir());
+        
+        // Hide console window on Windows
+        #[cfg(target_os = "windows")]
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_NO_WINDOW: u32 = 0x08000000;
+            command.creation_flags(CREATE_NO_WINDOW);
+        }
+        
+        command.spawn()
+            .map_err(|e| format!("Failed to launch client {} with {}: {}", i + 1, java_path, e))?;
+        
+        // Small delay between launches to avoid conflicts
+        if i < count - 1 {
+            std::thread::sleep(std::time::Duration::from_millis(500));
+        }
     }
-    
-    command.spawn()
-        .map_err(|e| format!("Failed to launch client with {}: {}", java_path, e))?;
     
     Ok(())
 }
