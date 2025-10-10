@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aragon Launcher</title>
+    <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Custom Title Bar -->
+        <div class="titlebar" data-tauri-drag-region>
+            <div class="titlebar-logo">
+                <img src="/logo.png" alt="Aragon" class="logo-small">
+                <span>Aragon Launcher</span>
+            </div>
+            <div class="titlebar-controls">
+                <button class="titlebar-button" id="minimize">−</button>
+                <button class="titlebar-button close" id="close">✕</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <img src="/logo.png" alt="Aragon RSPS" class="logo-main">
+            </div>
+
+            <!-- Status Section -->
+            <div class="status-section">
+                <p class="status-text" id="status">Initializing...</p>
+                <div class="progress-container" id="progressContainer" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p class="progress-details" id="progressDetails"></p>
+                </div>
+            </div>
+
+            <!-- Play Button -->
+            <button class="play-button" id="playButton" disabled>
+                <span id="playButtonText">PLAY</span>
+            </button>
+
+            <!-- Version Info -->
+            <div class="version-info">
+                <span id="versionText">Launcher v1.0.0</span>
+                <button class="settings-button" id="settingsButton">⚙ Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="closeSettings">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label for="jvmArgs">JVM Arguments:</label>
+                    <input type="text" id="jvmArgs" value="-Xmx2G -Xms512M" placeholder="-Xmx2G -Xms512M">
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="minimizeToTray" checked>
+                        Minimize to tray on game launch
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="autoUpdate" checked>
+                        Automatically check for updates
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="button-secondary" id="cancelSettings">Cancel</button>
+                <button class="button-primary" id="saveSettings">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

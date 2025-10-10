@@ -1,0 +1,257 @@
+// Prevents additional console window on Windows in release
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+use serde::{Deserialize, Serialize};
+use std::fs;
+use std::path::PathBuf;
+use std::process::Command;
+use tauri::Window;
+
+// Configuration
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct Config {
+    jvm_args: String,
+    minimize_to_tray: bool,
+    auto_update: bool,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            jvm_args: "-Xmx2G -Xms512M".to_string(),
+            minimize_to_tray: true,
+            auto_update: true,
+        }
+    }
+}
+
+// Manifest structures
+#[derive(Debug, Serialize, Deserialize)]
+struct Manifest {
+    latest: LatestVersions,
+    files: Vec<FileEntry>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct LatestVersions {
+    standalone: String,
+    windows: Option<String>,
+    macos: Option<String>,
+    linux: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct FileEntry {
+    os: String,
+    version: String,
+    url: String,
+    size: u64,
+    hash: String,
+    changelog: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct UpdateInfo {
+    #[serde(rename = "updateAvailable")]
+    update_available: bool,
+    version: String,
+    file: Option<FileEntry>,
+}
+
+// Get config file path
+fn get_config_path() -> PathBuf {
+    let config_dir = dirs::config_dir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join("AragonLauncher");
+    
+    fs::create_dir_all(&config_dir).ok();
+    config_dir.join("config.json")
+}
+
+// Get client installation directory
+fn get_install_dir() -> PathBuf {
+    let install_dir = dirs::config_dir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join("AragonLauncher");
+    
+    fs::create_dir_all(&install_dir).ok();
+    install_dir
+}
+
+// Load configuration
+#[tauri::command]
+fn get_config() -> Config {
+    let config_path = get_config_path();
+    
+    if let Ok(content) = fs::read_to_string(&config_path) {
+        serde_json::from_str(&content).unwrap_or_default()
+    } else {
+        Config::default()
+    }
+}
+
+// Save configuration
+#[tauri::command]
+fn save_config(config: Config) -> Result<(), String> {
+    let config_path = get_config_path();
+    let json = serde_json::to_string_pretty(&config)
+        .map_err(|e| e.to_string())?;
+    
+    fs::write(&config_path, json)
+        .map_err(|e| e.to_string())?;
+    
+    Ok(())
+}
+
+// Check for updates
+#[tauri::command]
+async fn check_for_updates() -> Result<UpdateInfo, String> {
+    const MANIFEST_URL: &str = "https://cdn.aragonrsps.com/manifest.json";
+    
+    // Fetch remote manifest
+    let remote_manifest: Manifest = reqwest::get(MANIFEST_URL)
+        .await
+        .map_err(|e| format!("Failed to fetch manifest: {}", e))?
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse manifest: {}", e))?;
+    
+    // Determine OS
+    let os = if cfg!(target_os = "windows") {
+        "windows"
+    } else if cfg!(target_os = "macos") {
+        "macos"
+    } else if cfg!(target_os = "linux") {
+        "linux"
+    } else {
+        "standalone"
+    };
+    
+    // Get version for this OS
+    let remote_version = match os {
+        "windows" => remote_manifest.latest.windows.as_ref(),
+        "macos" => remote_manifest.latest.macos.as_ref(),
+        "linux" => remote_manifest.latest.linux.as_ref(),
+        _ => None,
+    }.unwrap_or(&remote_manifest.latest.standalone);
+    
+    // Check local version
+    let local_manifest_path = get_install_dir().join("manifest.json");
+    let local_version = if let Ok(content) = fs::read_to_string(&local_manifest_path) {
+        if let Ok(local: Manifest) = serde_json::from_str(&content) {
+            match os {
+                "windows" => local.latest.windows.as_ref(),
+                "macos" => local.latest.macos.as_ref(),
+                "linux" => local.latest.linux.as_ref(),
+                _ => None,
+            }.unwrap_or(&local.latest.standalone).clone()
+        } else {
+            String::new()
+        }
+    } else {
+        String::new()
+    };
+    
+    let update_available = remote_version != &local_version || !get_install_dir().join("client.jar").exists();
+    
+    // Find file entry for this OS
+    let file = remote_manifest.files.iter()
+        .find(|f| f.os == os)
+        .or_else(|| remote_manifest.files.iter().find(|f| f.os == "standalone"))
+        .cloned();
+    
+    Ok(UpdateInfo {
+        update_available,
+        version: remote_version.clone(),
+        file,
+    })
+}
+
+// Download update
+#[tauri::command]
+async fn download_update(window: Window, update_info: UpdateInfo) -> Result<(), String> {
+    let file = update_info.file
+        .ok_or("No file entry found")?;
+    
+    let client_path = get_install_dir().join("client.jar");
+    
+    // Download file
+    let response = reqwest::get(&file.url)
+        .await
+        .map_err(|e| format!("Download failed: {}", e))?;
+    
+    let total_size = file.size;
+    let mut downloaded: u64 = 0;
+    let bytes = response.bytes()
+        .await
+        .map_err(|e| format!("Failed to read bytes: {}", e))?;
+    
+    // Save file
+    fs::write(&client_path, &bytes)
+        .map_err(|e| format!("Failed to save file: {}", e))?;
+    
+    // Verify hash
+    use sha2::{Sha256, Digest};
+    let mut hasher = Sha256::new();
+    hasher.update(&bytes);
+    let hash = format!("{:x}", hasher.finalize());
+    
+    if hash != file.hash {
+        fs::remove_file(&client_path).ok();
+        return Err(format!("Hash mismatch! Expected: {}, Got: {}", file.hash, hash));
+    }
+    
+    // Save manifest
+    let manifest_path = get_install_dir().join("manifest.json");
+    let manifest_json = serde_json::to_string_pretty(&update_info)
+        .map_err(|e| e.to_string())?;
+    fs::write(&manifest_path, manifest_json)
+        .map_err(|e| e.to_string())?;
+    
+    Ok(())
+}
+
+// Launch client
+#[tauri::command]
+fn launch_client(jvm_args: String) -> Result<(), String> {
+    let client_jar = get_install_dir().join("client.jar");
+    
+    if !client_jar.exists() {
+        return Err("Client JAR not found".to_string());
+    }
+    
+    let java_path = if cfg!(target_os = "windows") {
+        "java.exe"
+    } else {
+        "java"
+    };
+    
+    let mut args: Vec<String> = jvm_args
+        .split_whitespace()
+        .map(|s| s.to_string())
+        .collect();
+    
+    args.push("-jar".to_string());
+    args.push(client_jar.to_string_lossy().to_string());
+    
+    Command::new(java_path)
+        .args(&args)
+        .current_dir(get_install_dir())
+        .spawn()
+        .map_err(|e| format!("Failed to launch client: {}", e))?;
+    
+    Ok(())
+}
+
+fn main() {
+    tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![
+            get_config,
+            save_config,
+            check_for_updates,
+            download_update,
+            launch_client
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}

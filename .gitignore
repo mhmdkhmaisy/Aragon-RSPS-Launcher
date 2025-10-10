@@ -1,31 +1,19 @@
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+# Dependencies
+node_modules/
+package-lock.json
 
 # Build output
+dist/
 build/
-*.jar
-*.exe
-*.dmg
-*.deb
-*.rpm
+target/
+src-tauri/target/
+
+# Tauri
+src-tauri/Cargo.lock
 
 # IDE
 .idea/
-*.iml
 .vscode/
-.settings/
-.project
-.classpath
-.metadata/
 *.swp
 *.swo
 *~
@@ -38,10 +26,14 @@ Thumbs.db
 *.log
 logs/
 
-# Config (may contain sensitive data)
+# Config
 config.json
 manifest.json
 
-# Temp files
+# Temp
 *.tmp
 *.bak
+
+# Old JavaFX files
+src/main/java/
+pom.xml

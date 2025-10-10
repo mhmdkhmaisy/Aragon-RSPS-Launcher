@@ -1,0 +1,276 @@
+// Aragon Launcher - Main JavaScript
+
+// Check if running in Tauri (desktop) or browser (preview)
+const isTauri = typeof window.__TAURI__ !== 'undefined';
+
+// Import Tauri APIs if available
+let invoke, appWindow;
+if (isTauri) {
+    invoke = window.__TAURI__.invoke;
+    appWindow = window.__TAURI__.window.appWindow;
+}
+
+// DOM Elements
+const statusText = document.getElementById('status');
+const playButton = document.getElementById('playButton');
+const playButtonText = document.getElementById('playButtonText');
+const progressContainer = document.getElementById('progressContainer');
+const progressFill = document.getElementById('progressFill');
+const progressDetails = document.getElementById('progressDetails');
+const settingsButton = document.getElementById('settingsButton');
+const settingsModal = document.getElementById('settingsModal');
+
+// Window controls
+const minimizeBtn = document.getElementById('minimize');
+const closeBtn = document.getElementById('close');
+
+// Settings
+const jvmArgsInput = document.getElementById('jvmArgs');
+const minimizeToTrayCheckbox = document.getElementById('minimizeToTray');
+const autoUpdateCheckbox = document.getElementById('autoUpdate');
+
+// State
+let config = {
+    jvmArgs: '-Xmx2G -Xms512M',
+    minimizeToTray: true,
+    autoUpdate: true
+};
+
+// Initialize
+async function init() {
+    console.log('Initializing launcher...');
+    console.log('Running in Tauri:', isTauri);
+    
+    // Load config
+    await loadConfig();
+    
+    // Set up event listeners
+    setupEventListeners();
+    
+    // Check for updates
+    if (config.autoUpdate) {
+        await checkForUpdates();
+    } else {
+        updateStatus('Ready to play!');
+        playButton.disabled = false;
+    }
+}
+
+// Load configuration
+async function loadConfig() {
+    try {
+        if (isTauri) {
+            config = await invoke('get_config');
+            console.log('Loaded config:', config);
+        } else {
+            // Load from localStorage in browser preview
+            const saved = localStorage.getItem('launcher_config');
+            if (saved) {
+                config = JSON.parse(saved);
+            }
+        }
+        
+        // Update UI
+        jvmArgsInput.value = config.jvmArgs;
+        minimizeToTrayCheckbox.checked = config.minimizeToTray;
+        autoUpdateCheckbox.checked = config.autoUpdate;
+    } catch (error) {
+        console.error('Failed to load config:', error);
+    }
+}
+
+// Save configuration
+async function saveConfig() {
+    config.jvmArgs = jvmArgsInput.value;
+    config.minimizeToTray = minimizeToTrayCheckbox.checked;
+    config.autoUpdate = autoUpdateCheckbox.checked;
+    
+    try {
+        if (isTauri) {
+            await invoke('save_config', { config });
+        } else {
+            localStorage.setItem('launcher_config', JSON.stringify(config));
+        }
+        console.log('Config saved:', config);
+    } catch (error) {
+        console.error('Failed to save config:', error);
+    }
+}
+
+// Check for updates
+async function checkForUpdates() {
+    try {
+        updateStatus('Checking for updates...');
+        statusText.classList.add('loading');
+        
+        if (isTauri) {
+            // Call Rust backend
+            const updateInfo = await invoke('check_for_updates');
+            
+            if (updateInfo.updateAvailable) {
+                await downloadUpdate(updateInfo);
+            } else {
+                updateStatus('Ready to play!');
+                playButton.disabled = false;
+            }
+        } else {
+            // Browser preview mode - simulate update check
+            await simulateUpdateCheck();
+        }
+    } catch (error) {
+        console.error('Update check failed:', error);
+        updateStatus('Update check failed - Ready to play anyway');
+        playButton.disabled = false;
+    } finally {
+        statusText.classList.remove('loading');
+    }
+}
+
+// Download update
+async function downloadUpdate(updateInfo) {
+    try {
+        updateStatus('Downloading update...');
+        progressContainer.style.display = 'block';
+        
+        if (isTauri) {
+            // Listen for progress updates
+            await invoke('download_update', { updateInfo });
+        } else {
+            // Browser preview - simulate download
+            await simulateDownload();
+        }
+        
+        updateStatus('Update complete - Ready to play!');
+        progressContainer.style.display = 'none';
+        playButton.disabled = false;
+    } catch (error) {
+        console.error('Download failed:', error);
+        updateStatus('Download failed: ' + error);
+        progressContainer.style.display = 'none';
+    }
+}
+
+// Launch game
+async function launchGame() {
+    try {
+        playButton.disabled = true;
+        playButtonText.textContent = 'LAUNCHING...';
+        
+        if (isTauri) {
+            await invoke('launch_client', { 
+                jvmArgs: config.jvmArgs 
+            });
+            
+            playButtonText.textContent = 'RUNNING';
+            updateStatus('Client is running');
+            
+            if (config.minimizeToTray) {
+                appWindow.minimize();
+            }
+        } else {
+            // Browser preview - show message
+            alert('In browser preview mode.\n\nIn the desktop app, this would launch the game client with:\n' + config.jvmArgs);
+            playButton.disabled = false;
+            playButtonText.textContent = 'PLAY';
+        }
+    } catch (error) {
+        console.error('Failed to launch game:', error);
+        updateStatus('Launch failed: ' + error);
+        playButton.disabled = false;
+        playButtonText.textContent = 'PLAY';
+    }
+}
+
+// Simulate update check (browser preview)
+async function simulateUpdateCheck() {
+    await sleep(1500);
+    const hasUpdate = Math.random() > 0.5;
+    
+    if (hasUpdate) {
+        await simulateDownload();
+    }
+    
+    updateStatus('Ready to play!');
+    playButton.disabled = false;
+}
+
+// Simulate download (browser preview)
+async function simulateDownload() {
+    progressContainer.style.display = 'block';
+    
+    for (let i = 0; i <= 100; i += 2) {
+        progressFill.style.width = i + '%';
+        
+        const speed = (50 + Math.random() * 100).toFixed(2);
+        const eta = Math.ceil((100 - i) / 4);
+        
+        progressDetails.textContent = `${i}% - ${speed} KB/s - ETA: ${eta}s`;
+        
+        await sleep(50);
+    }
+    
+    progressContainer.style.display = 'none';
+}
+
+// Update status text
+function updateStatus(message) {
+    statusText.textContent = message;
+}
+
+// Event listeners
+function setupEventListeners() {
+    // Window controls
+    if (isTauri) {
+        minimizeBtn.addEventListener('click', () => appWindow.minimize());
+        closeBtn.addEventListener('click', () => appWindow.close());
+    } else {
+        minimizeBtn.style.display = 'none';
+        closeBtn.style.display = 'none';
+    }
+    
+    // Play button
+    playButton.addEventListener('click', launchGame);
+    
+    // Settings
+    settingsButton.addEventListener('click', () => {
+        settingsModal.classList.add('active');
+    });
+    
+    document.getElementById('closeSettings').addEventListener('click', () => {
+        settingsModal.classList.remove('active');
+    });
+    
+    document.getElementById('cancelSettings').addEventListener('click', () => {
+        settingsModal.classList.remove('active');
+        loadConfig(); // Reset to saved values
+    });
+    
+    document.getElementById('saveSettings').addEventListener('click', async () => {
+        await saveConfig();
+        settingsModal.classList.remove('active');
+    });
+    
+    // Close modal on outside click
+    settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) {
+            settingsModal.classList.remove('active');
+        }
+    });
+}
+
+// Utility
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Listen for progress events from Tauri
+if (isTauri) {
+    window.__TAURI__.event.listen('download-progress', (event) => {
+        const { percentage, speed, eta } = event.payload;
+        progressFill.style.width = percentage + '%';
+        progressDetails.textContent = `${percentage}% - ${speed} KB/s - ETA: ${eta}s`;
+    });
+}
+
+// Start the launcher
+init();

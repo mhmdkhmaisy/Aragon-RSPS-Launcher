@@ -1,0 +1,326 @@
+/* Aragon Launcher - Red & Black Theme */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(to bottom, #1a0000, #000000);
+    color: #cccccc;
+    overflow: hidden;
+    user-select: none;
+}
+
+.app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Custom Title Bar */
+.titlebar {
+    background: rgba(20, 0, 0, 0.8);
+    border-bottom: 2px solid #8B0000;
+    height: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.titlebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #cccccc;
+}
+
+.logo-small {
+    height: 24px;
+    width: auto;
+}
+
+.titlebar-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.titlebar-button {
+    background: transparent;
+    border: none;
+    color: #cccccc;
+    width: 40px;
+    height: 30px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 16px;
+}
+
+.titlebar-button:hover {
+    background: rgba(139, 0, 0, 0.5);
+    color: white;
+}
+
+.titlebar-button.close:hover {
+    background: #CC0000;
+}
+
+/* Main Content */
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    gap: 30px;
+}
+
+.logo-section {
+    margin-bottom: 20px;
+}
+
+.logo-main {
+    width: 400px;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(139, 0, 0, 0.5));
+}
+
+/* Status Section */
+.status-section {
+    text-align: center;
+    min-height: 80px;
+}
+
+.status-text {
+    font-size: 18px;
+    color: #cccccc;
+    margin-bottom: 15px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.progress-container {
+    width: 400px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 30px;
+    background: #000000;
+    border: 2px solid #8B0000;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, #8B0000, #FF0000);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-details {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #999999;
+}
+
+/* Play Button */
+.play-button {
+    background: linear-gradient(to bottom, #CC0000, #8B0000);
+    border: 2px solid #FF0000;
+    border-radius: 5px;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 80px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.8);
+}
+
+.play-button:hover:not(:disabled) {
+    background: linear-gradient(to bottom, #FF0000, #CC0000);
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.9);
+    transform: translateY(-2px);
+}
+
+.play-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.play-button:disabled {
+    background: #333333;
+    border-color: #444444;
+    color: #666666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Version Info */
+.version-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 12px;
+    color: #666666;
+}
+
+.settings-button {
+    background: transparent;
+    border: 1px solid #666666;
+    color: #cccccc;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.settings-button:hover {
+    border-color: #FF0000;
+    color: #FF0000;
+    background: rgba(139, 0, 0, 0.2);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #1a0000;
+    border: 2px solid #8B0000;
+    border-radius: 8px;
+    width: 500px;
+    max-width: 90%;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #8B0000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    color: #cccccc;
+    font-size: 20px;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    color: #cccccc;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.modal-close:hover {
+    color: #FF0000;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.setting-item {
+    margin-bottom: 20px;
+}
+
+.setting-item label {
+    display: block;
+    margin-bottom: 8px;
+    color: #cccccc;
+}
+
+.setting-item input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    background: #000000;
+    border: 1px solid #8B0000;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.setting-item input[type="text"]:focus {
+    outline: none;
+    border-color: #FF0000;
+}
+
+.setting-item input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: #FF0000;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid #8B0000;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.button-primary,
+.button-secondary {
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.button-primary {
+    background: #8B0000;
+    color: white;
+}
+
+.button-primary:hover {
+    background: #CC0000;
+}
+
+.button-secondary {
+    background: transparent;
+    border: 1px solid #666666;
+    color: #cccccc;
+}
+
+.button-secondary:hover {
+    border-color: #999999;
+    color: #ffffff;
+}
+
+/* Animations */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.status-text.loading {
+    animation: pulse 2s infinite;
+}

@@ -1,311 +1,227 @@
-# Aragon Launcher - Build Instructions
+# Aragon Launcher - Tauri Build Guide
 
-This guide will help you build the Aragon RSPS Launcher on your local machine and create native installers for Windows, macOS, and Linux.
+A lightweight, modern desktop launcher for Aragon RSPS built with Tauri (Rust + Web Technologies).
+
+---
+
+## 🎯 What is Tauri?
+
+Tauri lets you build **tiny, fast desktop apps** using:
+- **Frontend**: HTML, CSS, JavaScript (the UI you see)
+- **Backend**: Rust (handles updates, downloads, launching the game)
+- **Result**: ~3-5MB installers vs 150MB+ with Electron!
+
+---
+
+## ✨ Key Features
+
+- 🎨 **Modern Web UI** - Preview in browser during development
+- 🚀 **Lightweight** - Only ~3-5MB installers
+- 🔄 **Auto-Update System** - SHA-256 verified downloads
+- ⚙️ **Configurable** - JVM args, settings panel
+- 📦 **Native Installers** - .exe, .dmg, .deb packages
+- 🔒 **Secure** - Rust backend with minimal attack surface
 
 ---
 
 ## 📋 Prerequisites
 
-Before building, ensure you have the following installed on your machine:
+### For UI Development & Preview (Works in Replit!)
+- **Node.js 18+** and **npm** (or use Replit's environment)
+- That's it! You can preview the UI without Rust
 
-### Required Software:
-
-1. **JDK 17 or higher** (with JavaFX and jpackage)
-   - Download from: https://www.oracle.com/java/technologies/downloads/
-   - Or use OpenJDK: https://adoptium.net/
-   - Verify installation: `java -version` and `javac -version`
-
-2. **Maven 3.6+**
-   - Download from: https://maven.apache.org/download.cgi
-   - Verify installation: `mvn -version`
-
-3. **Git** (optional, for cloning)
-   - Download from: https://git-scm.com/downloads
-
-### Platform-Specific Requirements:
-
-#### Windows:
-- **WiX Toolset 3.11+** (for creating .exe installer)
-  - Download from: https://github.com/wixtoolset/wix3/releases
-  - Add to PATH
-
-#### macOS:
-- **Xcode Command Line Tools**
-  - Install: `xcode-select --install`
-
-#### Linux:
-- **fakeroot and rpm** (for .deb and .rpm packages)
-  - Ubuntu/Debian: `sudo apt install fakeroot rpm`
-  - Fedora/RHEL: `sudo dnf install fakeroot rpm-build`
+### For Building Desktop Installers (Local Machine)
+- **Node.js 18+** and **npm**
+- **Rust 1.70+** - [Install from rustup.rs](https://rustup.rs/)
+- **Platform-specific tools**:
+  - **Windows**: [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+  - **macOS**: Xcode Command Line Tools (`xcode-select --install`)
+  - **Linux**: `build-essential`, `libwebkit2gtk-4.0-dev`, etc.
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Download the Project
+### Option 1: Preview UI in Replit (or Browser)
 
-Download or clone this repository to your local machine.
+```bash
+# Install dependencies
+npm install
 
-### 2. Add Your Branding Images
-
-Place your logo and icon files in the resources directory:
-
-```
-src/main/resources/images/
-├── logo.png       (Your game logo, displayed in launcher)
-└── icon.png       (Application icon for shortcuts)
+# Start dev server
+npm run dev
 ```
 
-**Recommended sizes:**
-- `logo.png`: 400x150px or larger (transparent PNG)
-- `icon.png`: 256x256px or larger (PNG with transparent background)
+Then open the preview in Replit or visit `http://localhost:5000`
 
-### 3. Configure Your Manifest URL
-
-Edit `src/main/java/com/aragon/launcher/util/Config.java`:
-
-```java
-public static final String MANIFEST_URL = "https://cdn.aragonrsps.com/manifest.json";
-```
-
-Change this to point to your actual manifest URL.
+**Note**: In browser mode, it simulates the launcher behavior. The actual game launching only works in the desktop build.
 
 ---
 
-## 🔨 Building the Launcher
+### Option 2: Run Full Desktop App (Local Machine)
 
-### Option A: Using Build Scripts (Recommended)
-
-#### Windows:
-```batch
-cd aragon-launcher
-build-scripts\build-windows.bat
-```
-
-#### macOS:
 ```bash
-cd aragon-launcher
-chmod +x build-scripts/build-macos.sh
-./build-scripts/build-macos.sh
+# Install dependencies
+npm install
+
+# Run in development mode with Tauri
+npm run tauri:dev
 ```
 
-#### Linux:
-```bash
-cd aragon-launcher
-chmod +x build-scripts/build-linux.sh
-./build-scripts/build-linux.sh
-```
-
-### Option B: Manual Build
-
-#### Step 1: Build the JAR
-```bash
-mvn clean package
-```
-
-This creates `target/aragon-launcher-1.0.0.jar`
-
-#### Step 2: Create Custom JRE
-```bash
-jlink --add-modules java.base,java.desktop,java.logging,java.naming,java.sql,javafx.controls,javafx.fxml,javafx.graphics --output build/runtime
-```
-
-#### Step 3: Prepare Build Directory
-```bash
-mkdir -p build/input
-cp target/aragon-launcher-1.0.0.jar build/input/launcher.jar
-```
-
-#### Step 4: Create Installer
-
-**Windows (.exe):**
-```batch
-jpackage ^
-  --input build\input ^
-  --main-jar launcher.jar ^
-  --main-class com.aragon.launcher.Main ^
-  --runtime-image build\runtime ^
-  --name "Aragon Launcher" ^
-  --app-version 1.0.0 ^
-  --vendor "Aragon Studios" ^
-  --icon src\main\resources\images\icon.png ^
-  --type exe ^
-  --win-menu ^
-  --win-shortcut ^
-  --win-dir-chooser ^
-  --dest build\installers
-```
-
-**macOS (.dmg):**
-```bash
-jpackage \
-  --input build/input \
-  --main-jar launcher.jar \
-  --main-class com.aragon.launcher.Main \
-  --runtime-image build/runtime \
-  --name "Aragon Launcher" \
-  --app-version 1.0.0 \
-  --vendor "Aragon Studios" \
-  --icon src/main/resources/images/icon.png \
-  --type dmg \
-  --dest build/installers
-```
-
-**Linux (.deb):**
-```bash
-jpackage \
-  --input build/input \
-  --main-jar launcher.jar \
-  --main-class com.aragon.launcher.Main \
-  --runtime-image build/runtime \
-  --name "aragon-launcher" \
-  --app-version 1.0.0 \
-  --vendor "Aragon Studios" \
-  --icon src/main/resources/images/icon.png \
-  --type deb \
-  --dest build/installers
-```
+This opens the actual desktop application with Rust backend.
 
 ---
 
-## 📦 Build Output
+## 🔨 Building Installers
 
-After building, you'll find your installer in:
+### Step 1: Configure Your Manifest URL
 
+Edit `src-tauri/src/main.rs`, line ~110:
+
+```rust
+const MANIFEST_URL: &str = "https://cdn.aragonrsps.com/manifest.json";
 ```
-build/installers/
-├── Aragon Launcher-1.0.0.exe       (Windows)
-├── Aragon Launcher-1.0.0.dmg       (macOS)
-└── aragon-launcher_1.0.0-1_amd64.deb  (Linux)
+
+Change to your actual CDN URL.
+
+### Step 2: Build for Your Platform
+
+```bash
+# Build for current platform
+npm run tauri:build
 ```
 
-### Installer Details:
-
-**Windows:**
-- Creates Start Menu and Desktop shortcuts
-- Installs to: `C:\Users\<username>\AppData\Local\Aragon Launcher\`
-- Includes uninstaller in Add/Remove Programs
-
-**macOS:**
-- Creates .app bundle
-- Installs to: `/Applications/`
-- User data: `~/Library/Application Support/AragonLauncher/`
-
-**Linux:**
-- Creates .desktop entry for application menu
-- Installs to: `/opt/aragon-launcher/`
-- User data: `~/.config/AragonLauncher/`
+**Output locations:**
+- **Windows**: `src-tauri/target/release/bundle/msi/Aragon Launcher_1.0.0_x64_en-US.msi`
+- **macOS**: `src-tauri/target/release/bundle/dmg/Aragon Launcher_1.0.0_x64.dmg`
+- **Linux**: `src-tauri/target/release/bundle/deb/aragon-launcher_1.0.0_amd64.deb`
 
 ---
 
-## 🧪 Testing the Launcher
+## 📦 Platform-Specific Build Instructions
 
-### Run Without Building Installer:
+### Windows
 
+**Prerequisites:**
+1. Install [Rust](https://rustup.rs/)
+2. Install [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+3. Install [Node.js 18+](https://nodejs.org/)
+
+**Build:**
+```powershell
+npm install
+npm run tauri:build
+```
+
+**Output**: `src-tauri\target\release\bundle\msi\Aragon Launcher_1.0.0_x64_en-US.msi`
+
+---
+
+### macOS
+
+**Prerequisites:**
+1. Install Rust: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+2. Install Xcode Command Line Tools: `xcode-select --install`
+3. Install Node.js 18+
+
+**Build:**
 ```bash
-mvn javafx:run
+npm install
+npm run tauri:build
 ```
 
-This launches the JavaFX application directly for testing.
+**Output**: `src-tauri/target/release/bundle/dmg/Aragon Launcher_1.0.0_x64.dmg`
 
-### Test with Custom Manifest:
+---
 
-Create a test `manifest.json` file on a local web server:
+### Linux (Ubuntu/Debian)
 
-```json
-{
-  "latest": {
-    "standalone": "0.1.0",
-    "windows": "0.1.0"
-  },
-  "files": [
-    {
-      "os": "standalone",
-      "version": "0.1.0",
-      "url": "http://localhost:8000/client.jar",
-      "size": 1024000,
-      "hash": "your-sha256-hash-here",
-      "changelog": "Initial release"
-    }
-  ]
-}
+**Prerequisites:**
+```bash
+# Install Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+# Install dependencies
+sudo apt update
+sudo apt install -y \
+    libwebkit2gtk-4.0-dev \
+    build-essential \
+    curl \
+    wget \
+    file \
+    libssl-dev \
+    libgtk-3-dev \
+    libayatana-appindicator3-dev \
+    librsvg2-dev
+
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
 ```
 
-Update `Config.MANIFEST_URL` to point to your test server.
+**Build:**
+```bash
+npm install
+npm run tauri:build
+```
+
+**Output**: `src-tauri/target/release/bundle/deb/aragon-launcher_1.0.0_amd64.deb`
 
 ---
 
 ## 🎨 Customization
 
-### Change Theme Colors:
+### Change Theme Colors
 
-Edit `src/main/resources/css/launcher.css` to modify the red/black theme:
+Edit `src/styles.css`:
 
 ```css
-.launcher-root {
-    -fx-background-color: linear-gradient(to bottom, #1a0000, #000000);
-}
-
+/* Change red theme to blue */
 .play-button {
-    -fx-background-color: linear-gradient(to bottom, #CC0000, #8B0000);
+    background: linear-gradient(to bottom, #0066CC, #004C99);
+    border: 2px solid #0080FF;
+}
+
+.progress-fill {
+    background: linear-gradient(to right, #004C99, #0080FF);
 }
 ```
 
-### Change Default JVM Arguments:
+### Update Manifest URL
 
-Edit `src/main/java/com/aragon/launcher/util/Config.java`:
+Edit `src-tauri/src/main.rs`:
 
-```java
-private String jvmArgs = "-Xmx2G -Xms512M";
+```rust
+const MANIFEST_URL: &str = "https://your-cdn.com/manifest.json";
 ```
 
-### Modify Launcher Version:
+### Change Default JVM Args
 
-Update in two places:
+Edit `src-tauri/src/main.rs`:
 
-1. `src/main/java/com/aragon/launcher/util/Config.java`:
-   ```java
-   public static final String LAUNCHER_VERSION = "1.0.0";
-   ```
+```rust
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            jvm_args: "-Xmx4G -Xms1G".to_string(), // 4GB max memory
+            minimize_to_tray: true,
+            auto_update: true,
+        }
+    }
+}
+```
 
-2. `pom.xml`:
-   ```xml
-   <version>1.0.0</version>
-   ```
+### Replace Logo/Icon
 
----
-
-## 🔧 Troubleshooting
-
-### Error: "jpackage not found"
-- Make sure you're using JDK 17+
-- Verify: `jpackage --version`
-- jpackage is included in JDK 16+
-
-### Error: "JavaFX runtime components are missing"
-- Ensure JavaFX dependencies are in `pom.xml`
-- Run: `mvn dependency:resolve`
-
-### Error: "WiX Toolset not found" (Windows)
-- Download WiX 3.11+ from GitHub
-- Add WiX bin folder to system PATH
-- Restart terminal after installation
-
-### Build succeeds but installer doesn't work:
-- Check that `icon.png` and `logo.png` exist in resources
-- Verify manifest URL is accessible
-- Check file permissions on build scripts
-
-### Client won't launch:
-- Verify `client.jar` exists at the path specified in manifest
-- Check JVM arguments in settings
-- Review logs in: `%AppData%/AragonLauncher/logs/` (Windows)
+Replace files in `public/` directory:
+- `public/logo.png` - Main logo (displayed in launcher)
+- `public/icon.png` - App icon (for shortcuts)
 
 ---
 
-## 📝 Manifest JSON Format
+## 📖 Manifest Format
 
-Your web server should host a `manifest.json` file with this structure:
+Host a `manifest.json` file on your CDN:
 
 ```json
 {
@@ -321,91 +237,153 @@ Your web server should host a `manifest.json` file with this structure:
       "version": "1.0.0",
       "url": "https://cdn.example.com/client.jar",
       "size": 4094821,
-      "hash": "sha256-hash-of-file",
-      "changelog": "Bug fixes and improvements"
-    },
-    {
-      "os": "windows",
-      "version": "1.0.0",
-      "url": "https://cdn.example.com/client-windows.jar",
-      "size": 4100000,
-      "hash": "sha256-hash-of-file",
-      "changelog": "Windows-specific optimizations"
+      "hash": "sha256-hash-here",
+      "changelog": "Initial release"
     }
   ]
 }
 ```
 
-### Generating SHA-256 Hashes:
+### Generate SHA-256 Hash:
 
 **Windows (PowerShell):**
 ```powershell
-Get-FileHash -Algorithm SHA256 client.jar
+Get-FileHash -Algorithm SHA256 client.jar | Select-Object -ExpandProperty Hash
 ```
 
 **macOS/Linux:**
 ```bash
-shasum -a 256 client.jar
+shasum -a 256 client.jar | awk '{print $1}'
 ```
+
+---
+
+## 🔧 Development Workflow
+
+### 1. UI Development (Can do in Replit!)
+
+```bash
+npm run dev
+```
+
+Preview at `http://localhost:5000` - works in Replit preview pane!
+
+### 2. Desktop Testing (Local only)
+
+```bash
+npm run tauri:dev
+```
+
+Opens actual desktop app with full functionality.
+
+### 3. Build for Release
+
+```bash
+npm run tauri:build
+```
+
+Creates installer in `src-tauri/target/release/bundle/`.
+
+---
+
+## 🐛 Troubleshooting
+
+### "error: failed to run custom build command for `tauri`"
+- Make sure Rust is installed: `rustc --version`
+- Update Rust: `rustup update`
+
+### "webkit2gtk not found" (Linux)
+```bash
+sudo apt install libwebkit2gtk-4.0-dev
+```
+
+### "Command 'tauri' not found"
+```bash
+npm install
+# Tauri CLI should be in node_modules
+```
+
+### UI shows but "invoke" errors appear
+- You're in browser preview mode
+- Download and run `npm run tauri:dev` for full functionality
+
+### Client won't launch
+- Verify Java is installed on the system
+- Check `client.jar` exists in config directory
+- Review console logs for errors
+
+---
+
+## 📁 Project Structure
+
+```
+aragon-launcher/
+├── src/                    # Frontend (Web UI)
+│   ├── main.js            # Main JavaScript logic
+│   └── styles.css         # Styling (red/black theme)
+├── src-tauri/             # Backend (Rust)
+│   ├── src/
+│   │   └── main.rs        # Rust backend logic
+│   ├── Cargo.toml         # Rust dependencies
+│   └── tauri.conf.json    # Tauri configuration
+├── public/                # Static assets
+│   ├── logo.png
+│   └── icon.png
+├── index.html             # Main HTML
+├── package.json           # Node dependencies
+└── vite.config.js         # Vite config
+```
+
+---
+
+## 📊 Size Comparison
+
+| Framework | Installer Size | Memory Usage |
+|-----------|---------------|--------------|
+| **Tauri** | ~3-5 MB | ~50-80 MB |
+| Electron | ~150 MB | ~200-300 MB |
+| JavaFX | ~60 MB | ~100-150 MB |
 
 ---
 
 ## 🚢 Distribution
 
-### Uploading to Your CDN:
+### Upload to CDN
 
-1. Build the installer for each platform
-2. Upload installers to your website or CDN
+1. Build installer: `npm run tauri:build`
+2. Upload to your website/CDN
 3. Provide download links to users
-4. Update `manifest.json` when releasing new client versions
 
-### Recommended File Structure:
+### Auto-Update Setup
 
-```
-https://cdn.aragonrsps.com/
-├── manifest.json
-├── launchers/
-│   ├── AragonLauncher-Windows-1.0.0.exe
-│   ├── AragonLauncher-macOS-1.0.0.dmg
-│   └── AragonLauncher-Linux-1.0.0.deb
-└── clients/
-    ├── client-1.0.0.jar
-    ├── client-1.0.1.jar
-    └── ...
-```
+When users run the launcher, it:
+1. Checks `manifest.json` for new version
+2. Downloads `client.jar` if needed
+3. Verifies SHA-256 hash
+4. Launches game with configured JVM args
 
 ---
 
-## 📚 Additional Resources
+## ✅ Pre-Build Checklist
 
-- **JavaFX Documentation**: https://openjfx.io/
-- **jpackage Guide**: https://docs.oracle.com/en/java/javase/17/jpackage/
-- **Maven Documentation**: https://maven.apache.org/guides/
-
----
-
-## ✅ Checklist Before First Build
-
-- [ ] JDK 17+ installed and in PATH
-- [ ] Maven 3.6+ installed
-- [ ] WiX Toolset installed (Windows only)
-- [ ] Logo and icon images added to resources
-- [ ] Manifest URL configured in Config.java
-- [ ] Test manifest.json created and accessible
-- [ ] Test client.jar created and uploaded
-- [ ] Build script permissions set (chmod +x on Linux/macOS)
+- [ ] Rust installed (`rustc --version`)
+- [ ] Node.js installed (`node --version`)
+- [ ] Platform build tools installed
+- [ ] Logo/icon added to `public/`
+- [ ] Manifest URL configured in `main.rs`
+- [ ] Tested in dev mode (`npm run tauri:dev`)
+- [ ] Test `manifest.json` accessible
+- [ ] Test `client.jar` download working
 
 ---
 
 ## 🎉 Success!
 
-Once built, your launcher will:
-- ✅ Auto-update the game client when new versions are released
-- ✅ Verify file integrity with SHA-256 hashing
-- ✅ Bundle Java runtime (no user installation needed)
-- ✅ Create desktop shortcuts and Start Menu entries
-- ✅ Minimize to system tray
-- ✅ Allow custom JVM arguments
-- ✅ Work offline after initial download
+Your Tauri launcher is:
+- ✅ 20x smaller than Electron
+- ✅ Faster and more secure
+- ✅ Auto-updating
+- ✅ Professional looking
+- ✅ Preview-able in Replit!
 
-Your players can now enjoy a professional, auto-updating launcher experience just like major games!
+Enjoy building your lightweight launcher! 🚀
