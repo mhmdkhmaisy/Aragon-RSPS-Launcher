@@ -29,14 +29,19 @@ const closeBtn = document.getElementById('close');
 const jvmArgsInput = document.getElementById('jvmArgs');
 const autoUpdateCheckbox = document.getElementById('autoUpdate');
 const autoLaunchCheckbox = document.getElementById('autoLaunch');
+const clientCountInput = document.getElementById('clientCount');
 const closeOnLaunchCheckbox = document.getElementById('closeOnLaunch');
+const closeDelaySlider = document.getElementById('closeDelay');
+const closeDelayValue = document.getElementById('closeDelayValue');
 
 // State
 let config = {
     jvmArgs: '-Xmx2G -Xms512M',
     closeOnLaunch: false,
     autoUpdate: true,
-    autoLaunch: true
+    autoLaunch: true,
+    clientCount: 1,
+    closeDelay: 5
 };
 
 // Initialize
@@ -82,7 +87,10 @@ async function loadConfig() {
         jvmArgsInput.value = config.jvmArgs;
         autoUpdateCheckbox.checked = config.autoUpdate;
         autoLaunchCheckbox.checked = config.autoLaunch;
+        clientCountInput.value = config.clientCount;
         closeOnLaunchCheckbox.checked = config.closeOnLaunch;
+        closeDelaySlider.value = config.closeDelay;
+        closeDelayValue.textContent = config.closeDelay;
     } catch (error) {
         console.error('Failed to load config:', error);
     }
@@ -93,7 +101,9 @@ async function saveConfig() {
     config.jvmArgs = jvmArgsInput.value;
     config.autoUpdate = autoUpdateCheckbox.checked;
     config.autoLaunch = autoLaunchCheckbox.checked;
+    config.clientCount = parseInt(clientCountInput.value);
     config.closeOnLaunch = closeOnLaunchCheckbox.checked;
+    config.closeDelay = parseInt(closeDelaySlider.value);
     
     try {
         if (isTauri) {
@@ -180,18 +190,37 @@ async function downloadUpdate(updateInfo) {
 async function launchGame() {
     try {
         playButton.disabled = true;
-        playButtonText.textContent = 'LAUNCHING...';
+        const clientCount = config.clientCount;
+        const clientText = clientCount > 1 ? `${clientCount} CLIENTS` : 'CLIENT';
+        playButtonText.textContent = `LAUNCHING ${clientText}...`;
         
         if (isTauri) {
             await invoke('launch_client', { 
-                jvmArgs: config.jvmArgs 
+                jvmArgs: config.jvmArgs,
+                clientCount: clientCount
             });
             
             playButtonText.textContent = 'LAUNCHED';
-            updateStatus('Client launched successfully');
+            updateStatus(`${clientText} launched successfully`);
             
             if (config.closeOnLaunch) {
-                await appWindow.close();
+                const delay = config.closeDelay * 1000;
+                updateStatus(`Closing in ${config.closeDelay} seconds...`);
+                
+                // Countdown
+                let remaining = config.closeDelay;
+                const countdown = setInterval(() => {
+                    remaining--;
+                    if (remaining > 0) {
+                        updateStatus(`Closing in ${remaining} seconds...`);
+                    } else {
+                        clearInterval(countdown);
+                    }
+                }, 1000);
+                
+                setTimeout(async () => {
+                    await appWindow.close();
+                }, delay);
             } else {
                 // Re-enable play button after 2 seconds for multiple sessions
                 setTimeout(() => {
@@ -202,7 +231,7 @@ async function launchGame() {
             }
         } else {
             // Browser preview - show message
-            alert('In browser preview mode.\n\nIn the desktop app, this would launch the game client with:\n' + config.jvmArgs);
+            alert(`In browser preview mode.\n\nIn the desktop app, this would launch ${clientCount} client(s) with:\n${config.jvmArgs}\n\nClose delay: ${config.closeDelay} seconds`);
             playButton.disabled = false;
             playButtonText.textContent = 'PLAY';
         }
@@ -318,6 +347,13 @@ function setupEventListeners() {
             if (e.target === settingsModal) {
                 settingsModal.classList.remove('active');
             }
+        });
+    }
+    
+    // Update close delay value display when slider changes
+    if (closeDelaySlider && closeDelayValue) {
+        closeDelaySlider.addEventListener('input', (e) => {
+            closeDelayValue.textContent = e.target.value;
         });
     }
 }
