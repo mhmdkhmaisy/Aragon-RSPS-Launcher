@@ -254,6 +254,8 @@ body {
 
 .modal-body {
     padding: 20px;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .setting-item {
@@ -331,7 +333,13 @@ body {
     padding: 20px;
     border-top: 1px solid #8B0000;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-footer-right {
+    display: flex;
     gap: 10px;
 }
 

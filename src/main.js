@@ -29,7 +29,8 @@ const closeBtn = document.getElementById('close');
 const jvmArgsInput = document.getElementById('jvmArgs');
 const autoUpdateCheckbox = document.getElementById('autoUpdate');
 const autoLaunchCheckbox = document.getElementById('autoLaunch');
-const clientCountInput = document.getElementById('clientCount');
+const clientCountSlider = document.getElementById('clientCount');
+const clientCountValue = document.getElementById('clientCountValue');
 const closeOnLaunchCheckbox = document.getElementById('closeOnLaunch');
 const closeDelaySlider = document.getElementById('closeDelay');
 const closeDelayValue = document.getElementById('closeDelayValue');
@@ -87,7 +88,8 @@ async function loadConfig() {
         jvmArgsInput.value = config.jvmArgs;
         autoUpdateCheckbox.checked = config.autoUpdate;
         autoLaunchCheckbox.checked = config.autoLaunch;
-        clientCountInput.value = config.clientCount;
+        clientCountSlider.value = config.clientCount;
+        clientCountValue.textContent = config.clientCount;
         closeOnLaunchCheckbox.checked = config.closeOnLaunch;
         closeDelaySlider.value = config.closeDelay;
         closeDelayValue.textContent = config.closeDelay;
@@ -101,7 +103,7 @@ async function saveConfig() {
     config.jvmArgs = jvmArgsInput.value;
     config.autoUpdate = autoUpdateCheckbox.checked;
     config.autoLaunch = autoLaunchCheckbox.checked;
-    config.clientCount = parseInt(clientCountInput.value);
+    config.clientCount = parseInt(clientCountSlider.value);
     config.closeOnLaunch = closeOnLaunchCheckbox.checked;
     config.closeDelay = parseInt(closeDelaySlider.value);
     
@@ -350,10 +352,33 @@ function setupEventListeners() {
         });
     }
     
+    // Update client count value display when slider changes
+    if (clientCountSlider && clientCountValue) {
+        clientCountSlider.addEventListener('input', (e) => {
+            clientCountValue.textContent = e.target.value;
+        });
+    }
+    
     // Update close delay value display when slider changes
     if (closeDelaySlider && closeDelayValue) {
         closeDelaySlider.addEventListener('input', (e) => {
             closeDelayValue.textContent = e.target.value;
+        });
+    }
+    
+    // Reset settings to default
+    const resetSettingsBtn = document.getElementById('resetSettings');
+    if (resetSettingsBtn) {
+        resetSettingsBtn.addEventListener('click', () => {
+            // Reset to defaults
+            jvmArgsInput.value = '-Xmx2G -Xms512M';
+            autoUpdateCheckbox.checked = true;
+            autoLaunchCheckbox.checked = true;
+            clientCountSlider.value = 1;
+            clientCountValue.textContent = '1';
+            closeOnLaunchCheckbox.checked = false;
+            closeDelaySlider.value = 5;
+            closeDelayValue.textContent = '5';
         });
     }
 }
