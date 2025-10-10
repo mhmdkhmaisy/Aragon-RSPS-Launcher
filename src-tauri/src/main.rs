@@ -115,7 +115,7 @@ fn save_config(config: Config) -> Result<(), String> {
 // Check for updates
 #[tauri::command]
 async fn check_for_updates() -> Result<UpdateInfo, String> {
-    const MANIFEST_URL: &str = "http://127.0.0.1:8000/manifest.json";
+    const MANIFEST_URL: &str = "https://cdn.aragonrsps.com/manifest.json";
     
     // Create client with timeout
     let client = reqwest::Client::builder()
@@ -164,7 +164,7 @@ async fn check_for_updates() -> Result<UpdateInfo, String> {
 // Download update
 #[tauri::command]
 async fn download_update(_window: Window, update_info: UpdateInfo) -> Result<(), String> {
-    const BASE_URL: &str = "http://127.0.0.1:8000";
+    const BASE_URL: &str = "https://cdn.aragonrsps.com";
     
     let file = update_info.file.clone()
         .ok_or("No file entry found")?;
@@ -221,29 +221,43 @@ async fn download_update(_window: Window, update_info: UpdateInfo) -> Result<(),
 
 // Get bundled JRE path
 fn get_bundled_jre_path() -> Option<PathBuf> {
-    // Try to get the resource directory from Tauri
-    let resource_dir = std::env::current_exe()
-        .ok()?
-        .parent()?
-        .join("resources")
-        .join("jre");
+    let exe_path = std::env::current_exe().ok()?;
+    let exe_dir = exe_path.parent()?;
     
-    // Platform-specific JRE location
-    let platform_jre = if cfg!(target_os = "windows") {
-        resource_dir.join("windows").join("bin").join("java.exe")
-    } else if cfg!(target_os = "macos") {
-        resource_dir.join("macos").join("bin").join("java")
-    } else if cfg!(target_os = "linux") {
-        resource_dir.join("linux").join("bin").join("java")
+    // Platform-specific JRE executable name
+    let java_exe = if cfg!(target_os = "windows") {
+        "java.exe"
     } else {
-        return None;
+        "java"
     };
     
-    if platform_jre.exists() {
-        Some(platform_jre)
-    } else {
-        None
+    // Try different possible locations for bundled JRE
+    let possible_paths = vec![
+        // Production build - resources are flattened
+        exe_dir.join("jre").join("bin").join(java_exe),
+        // Alternative production location
+        exe_dir.join("resources").join("jre").join("bin").join(java_exe),
+        // Windows-specific paths
+        exe_dir.join("jre").join("windows").join("bin").join(java_exe),
+        exe_dir.join("resources").join("jre").join("windows").join("bin").join(java_exe),
+        // macOS-specific paths
+        exe_dir.join("jre").join("macos").join("bin").join(java_exe),
+        exe_dir.join("resources").join("jre").join("macos").join("bin").join(java_exe),
+        // Linux-specific paths
+        exe_dir.join("jre").join("linux").join("bin").join(java_exe),
+        exe_dir.join("resources").join("jre").join("linux").join("bin").join(java_exe),
+    ];
+    
+    // Return the first path that exists
+    for path in possible_paths {
+        if path.exists() {
+            eprintln!("Found bundled JRE at: {}", path.display());
+            return Some(path);
+        }
     }
+    
+    eprintln!("No bundled JRE found, will use system Java");
+    None
 }
 
 // Get Java executable path (bundled or system)
