@@ -27,14 +27,16 @@ const closeBtn = document.getElementById('close');
 
 // Settings
 const jvmArgsInput = document.getElementById('jvmArgs');
-const minimizeToTrayCheckbox = document.getElementById('minimizeToTray');
 const autoUpdateCheckbox = document.getElementById('autoUpdate');
+const autoLaunchCheckbox = document.getElementById('autoLaunch');
+const closeOnLaunchCheckbox = document.getElementById('closeOnLaunch');
 
 // State
 let config = {
     jvmArgs: '-Xmx2G -Xms512M',
-    minimizeToTray: true,
-    autoUpdate: true
+    closeOnLaunch: false,
+    autoUpdate: true,
+    autoLaunch: true
 };
 
 // Initialize
@@ -54,6 +56,11 @@ async function init() {
     } else {
         updateStatus('Ready to play!');
         playButton.disabled = false;
+        
+        // Auto launch if updates are disabled but auto launch is enabled
+        if (config.autoLaunch) {
+            setTimeout(() => launchGame(), 500);
+        }
     }
 }
 
@@ -73,8 +80,9 @@ async function loadConfig() {
         
         // Update UI
         jvmArgsInput.value = config.jvmArgs;
-        minimizeToTrayCheckbox.checked = config.minimizeToTray;
         autoUpdateCheckbox.checked = config.autoUpdate;
+        autoLaunchCheckbox.checked = config.autoLaunch;
+        closeOnLaunchCheckbox.checked = config.closeOnLaunch;
     } catch (error) {
         console.error('Failed to load config:', error);
     }
@@ -83,8 +91,9 @@ async function loadConfig() {
 // Save configuration
 async function saveConfig() {
     config.jvmArgs = jvmArgsInput.value;
-    config.minimizeToTray = minimizeToTrayCheckbox.checked;
     config.autoUpdate = autoUpdateCheckbox.checked;
+    config.autoLaunch = autoLaunchCheckbox.checked;
+    config.closeOnLaunch = closeOnLaunchCheckbox.checked;
     
     try {
         if (isTauri) {
@@ -114,6 +123,11 @@ async function checkForUpdates() {
                 } else {
                     updateStatus('Ready to play!');
                     playButton.disabled = false;
+                }
+                
+                // Auto launch if enabled and ready
+                if (config.autoLaunch && !playButton.disabled) {
+                    setTimeout(() => launchGame(), 500);
                 }
             } catch (invokeError) {
                 console.error('Tauri invoke failed:', invokeError);
@@ -150,6 +164,11 @@ async function downloadUpdate(updateInfo) {
         updateStatus('Update complete - Ready to play!');
         progressContainer.style.display = 'none';
         playButton.disabled = false;
+        
+        // Auto launch if enabled
+        if (config.autoLaunch) {
+            setTimeout(() => launchGame(), 500);
+        }
     } catch (error) {
         console.error('Download failed:', error);
         updateStatus('Download failed: ' + error);
@@ -171,8 +190,8 @@ async function launchGame() {
             playButtonText.textContent = 'RUNNING';
             updateStatus('Client is running');
             
-            if (config.minimizeToTray) {
-                appWindow.minimize();
+            if (config.closeOnLaunch) {
+                await appWindow.close();
             }
         } else {
             // Browser preview - show message

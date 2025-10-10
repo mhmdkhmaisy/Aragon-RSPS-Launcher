@@ -12,18 +12,21 @@ use tauri::Window;
 struct Config {
     #[serde(rename = "jvmArgs")]
     jvm_args: String,
-    #[serde(rename = "minimizeToTray")]
-    minimize_to_tray: bool,
+    #[serde(rename = "closeOnLaunch")]
+    close_on_launch: bool,
     #[serde(rename = "autoUpdate")]
     auto_update: bool,
+    #[serde(rename = "autoLaunch")]
+    auto_launch: bool,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
             jvm_args: "-Xmx2G -Xms512M".to_string(),
-            minimize_to_tray: true,
+            close_on_launch: false,
             auto_update: true,
+            auto_launch: true,
         }
     }
 }
