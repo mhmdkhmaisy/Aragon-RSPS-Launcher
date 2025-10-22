@@ -12,14 +12,17 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**October 22, 2025** - Dragon theme UI redesign
-- Redesigned UI with dragon theme color palette (crimson, gold, ember)
-- Implemented Jagex Launcher-inspired clean, card-based layout
-- Added multi-layered gradient backgrounds with atmospheric depth
+**October 22, 2025** - Jagex Launcher-style redesign with dragon theme
+- Complete UI restructure to match Jagex Launcher layout
+- Two-column layout: left side (promotional banner + Recent Updates), right sidebar (logo + play button)
+- Top navigation bar with Aragon icon and Settings button
+- Added Recent Updates widget section with placeholder update cards
+- Dragon theme color palette throughout (crimson #c41e3a, gold #d4a574, ember #ff6b35)
+- Multi-layered gradient backgrounds with atmospheric depth
 - Enhanced visual effects: glows, shadows, and smooth animations
-- Created premium button designs with crimson-to-gold hover gradients
-- Improved modal and settings UI with glass-effect cards
-- Added warm brown-tinted borders and dual-glow hover effects
+- Premium button designs with crimson-to-gold hover gradients
+- Glass-effect cards with warm brown-tinted borders
+- Clean, modern layout without crossed widgets
 
 **October 10, 2025** - Enhanced launcher features
 - Added multi-client launch support (1-3 clients simultaneously)
