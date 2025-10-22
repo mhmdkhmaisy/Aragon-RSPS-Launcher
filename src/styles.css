@@ -128,7 +128,7 @@ body {
     padding: 25px;
     gap: 20px;
     overflow-y: auto;
-    background: url('/background.gif') center center / cover no-repeat;
+    background: url('/background.gif') center center / cover no-repeat fixed;
     position: relative;
 }
 
