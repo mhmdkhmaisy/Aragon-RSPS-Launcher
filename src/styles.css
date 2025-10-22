@@ -176,6 +176,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    margin-top: 300px;
 }
 
 .section-header {
