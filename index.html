@@ -99,13 +99,15 @@
                 <div class="account-section">
                     <div class="account-label">Character</div>
                     <div class="account-info">
-                        <span>Ready to Play</span>
+                        <select id="characterSelect" class="character-selector">
+                            <option value="">No character selected</option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- Quick Links -->
                 <div class="quick-links">
-                    <a href="#" class="quick-link">Account settings</a>
+                    <a href="#" class="quick-link" id="characterManagement">Character Management</a>
                     <a href="#" class="quick-link">Community Website</a>
                 </div>
 
@@ -113,6 +115,57 @@
                 <div class="version-info">
                     <span id="versionText">Launcher v1.0.0</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Character Management Modal -->
+    <div class="modal" id="characterModal">
+        <div class="modal-content character-modal-content">
+            <div class="modal-header">
+                <h2>Character Management</h2>
+                <button class="modal-close" id="closeCharacterModal">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="character-table-container">
+                    <table class="character-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Quick Launch</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="characterTableBody">
+                            <tr class="no-characters">
+                                <td colspan="3" style="text-align: center; color: var(--text-muted);">No characters added yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="add-character-section">
+                    <h3>Add New Character</h3>
+                    <div class="setting-item">
+                        <label for="newUsername">Username:</label>
+                        <input type="text" id="newUsername" placeholder="Enter username" maxlength="20">
+                    </div>
+                    <div class="setting-item">
+                        <label for="newPassword">Password:</label>
+                        <input type="password" id="newPassword" placeholder="Enter password">
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="newQuickLaunch">
+                            Set as quick launch character
+                        </label>
+                    </div>
+                    <button class="button-primary" id="addCharacterBtn" style="width: 100%;">Add Character</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="character-count" id="characterCount">0 / 3 characters</div>
+                <button class="button-secondary" id="closeCharacterModalBtn">Close</button>
             </div>
         </div>
     </div>

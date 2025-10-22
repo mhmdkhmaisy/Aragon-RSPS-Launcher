@@ -1,4 +1,5 @@
 // Aragon Launcher - Main JavaScript
+import characterManager from './characterManager.js';
 
 // Check if running in Tauri (desktop) or browser (preview)
 const isTauri = typeof window.__TAURI__ !== 'undefined';
@@ -35,6 +36,17 @@ const closeOnLaunchCheckbox = document.getElementById('closeOnLaunch');
 const closeDelaySlider = document.getElementById('closeDelay');
 const closeDelayValue = document.getElementById('closeDelayValue');
 
+// Character management elements
+const characterSelect = document.getElementById('characterSelect');
+const characterManagementBtn = document.getElementById('characterManagement');
+const characterModal = document.getElementById('characterModal');
+const characterTableBody = document.getElementById('characterTableBody');
+const newUsernameInput = document.getElementById('newUsername');
+const newPasswordInput = document.getElementById('newPassword');
+const newQuickLaunchCheckbox = document.getElementById('newQuickLaunch');
+const addCharacterBtn = document.getElementById('addCharacterBtn');
+const characterCount = document.getElementById('characterCount');
+
 // State
 let config = {
     jvmArgs: '-Xmx2G -Xms512M',
@@ -45,6 +57,102 @@ let config = {
     closeDelay: 5
 };
 
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Update character UI
+function updateCharacterUI() {
+    updateCharacterSelector();
+    renderCharacterTable();
+    updateCharacterCount();
+}
+
+// Update character selector dropdown
+function updateCharacterSelector() {
+    const characters = characterManager.getAllCharacters();
+    const selected = characterManager.getSelectedCharacter();
+    
+    characterSelect.innerHTML = '';
+    
+    if (characters.length === 0) {
+        characterSelect.innerHTML = '<option value="">No character selected</option>';
+        characterSelect.disabled = true;
+    } else {
+        characters.forEach(char => {
+            const option = document.createElement('option');
+            option.value = char.id;
+            option.textContent = char.username + (char.quickLaunch ? ' (Quick Launch)' : '');
+            if (selected && selected.id === char.id) {
+                option.selected = true;
+            }
+            characterSelect.appendChild(option);
+        });
+        characterSelect.disabled = false;
+    }
+}
+
+// Render character table
+function renderCharacterTable() {
+    const characters = characterManager.getAllCharacters();
+    
+    if (characters.length === 0) {
+        characterTableBody.innerHTML = '<tr class="no-characters"><td colspan="3" style="text-align: center; color: var(--text-muted);">No characters added yet</td></tr>';
+        return;
+    }
+    
+    characterTableBody.innerHTML = characters.map(char => `
+        <tr>
+            <td>
+                <span class="character-username">${escapeHtml(char.username)}</span>
+                ${char.quickLaunch ? '<span class="quick-launch-badge">Quick Launch</span>' : ''}
+            </td>
+            <td>
+                <div class="quick-launch-toggle">
+                    <input type="checkbox" 
+                           class="quick-launch-checkbox" 
+                           data-id="${char.id}" 
+                           ${char.quickLaunch ? 'checked' : ''}>
+                </div>
+            </td>
+            <td>
+                <div class="character-actions">
+                    <button class="delete-btn" data-id="${char.id}">Delete</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+    
+    characterTableBody.querySelectorAll('.quick-launch-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const id = e.target.getAttribute('data-id');
+            characterManager.toggleQuickLaunch(id);
+            updateCharacterUI();
+        });
+    });
+    
+    characterTableBody.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = e.target.getAttribute('data-id');
+            const char = characterManager.getAllCharacters().find(c => c.id === id);
+            if (char && confirm(`Are you sure you want to delete character "${char.username}"?`)) {
+                characterManager.deleteCharacter(id);
+                updateCharacterUI();
+            }
+        });
+    });
+}
+
+// Update character count display
+function updateCharacterCount() {
+    const count = characterManager.getAllCharacters().length;
+    characterCount.textContent = `${count} / 3 characters`;
+    addCharacterBtn.disabled = !characterManager.canAddMore();
+}
+
 // Initialize
 async function init() {
     console.log('Initializing launcher...');
@@ -52,6 +160,10 @@ async function init() {
     
     // Load config
     await loadConfig();
+    
+    // Load characters
+    await characterManager.loadCharacters();
+    updateCharacterUI();
     
     // Set up event listeners
     setupEventListeners();
@@ -196,10 +308,14 @@ async function launchGame() {
         const clientText = clientCount > 1 ? `${clientCount} CLIENTS` : 'CLIENT';
         playButtonText.textContent = `LAUNCHING ${clientText}...`;
         
+        const selectedCharacter = characterManager.getSelectedCharacter();
+        
         if (isTauri) {
             await invoke('launch_client', { 
                 jvmArgs: config.jvmArgs,
-                clientCount: clientCount
+                clientCount: clientCount,
+                username: selectedCharacter?.username || '',
+                passwordHash: selectedCharacter?.passwordHash || ''
             });
             
             playButtonText.textContent = 'LAUNCHED';
@@ -233,7 +349,8 @@ async function launchGame() {
             }
         } else {
             // Browser preview - show message
-            alert(`In browser preview mode.\n\nIn the desktop app, this would launch ${clientCount} client(s) with:\n${config.jvmArgs}\n\nClose delay: ${config.closeDelay} seconds`);
+            const charInfo = selectedCharacter ? `\nCharacter: ${selectedCharacter.username}` : '\nNo character selected';
+            alert(`In browser preview mode.\n\nIn the desktop app, this would launch ${clientCount} client(s) with:\n${config.jvmArgs}${charInfo}\n\nClose delay: ${config.closeDelay} seconds`);
             playButton.disabled = false;
             playButtonText.textContent = 'PLAY';
         }
@@ -309,6 +426,56 @@ function setupEventListeners() {
     
     // Play button
     playButton.addEventListener('click', launchGame);
+    
+    // Character selector
+    characterSelect.addEventListener('change', (e) => {
+        if (e.target.value) {
+            characterManager.selectCharacter(e.target.value);
+        }
+    });
+    
+    // Character management button
+    characterManagementBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        characterModal.classList.add('active');
+        updateCharacterUI();
+    });
+    
+    // Close character modal
+    document.getElementById('closeCharacterModal').addEventListener('click', () => {
+        characterModal.classList.remove('active');
+    });
+    
+    document.getElementById('closeCharacterModalBtn').addEventListener('click', () => {
+        characterModal.classList.remove('active');
+    });
+    
+    // Close modal on outside click
+    characterModal.addEventListener('click', (e) => {
+        if (e.target === characterModal) {
+            characterModal.classList.remove('active');
+        }
+    });
+    
+    // Add character button
+    addCharacterBtn.addEventListener('click', () => {
+        const username = newUsernameInput.value.trim();
+        const password = newPasswordInput.value;
+        const quickLaunch = newQuickLaunchCheckbox.checked;
+        
+        try {
+            characterManager.addCharacter(username, password, quickLaunch);
+            
+            newUsernameInput.value = '';
+            newPasswordInput.value = '';
+            newQuickLaunchCheckbox.checked = false;
+            
+            updateCharacterUI();
+            alert(`Character "${username}" added successfully!`);
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
+    });
     
     // Settings - ensure it's not null and add event listener
     if (settingsButton) {
