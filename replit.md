@@ -12,6 +12,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**October 22, 2025** - Dragon theme UI redesign
+- Redesigned UI with dragon theme color palette (crimson, gold, ember)
+- Implemented Jagex Launcher-inspired clean, card-based layout
+- Added multi-layered gradient backgrounds with atmospheric depth
+- Enhanced visual effects: glows, shadows, and smooth animations
+- Created premium button designs with crimson-to-gold hover gradients
+- Improved modal and settings UI with glass-effect cards
+- Added warm brown-tinted borders and dual-glow hover effects
+
 **October 10, 2025** - Enhanced launcher features
 - Added multi-client launch support (1-3 clients simultaneously)
 - Implemented configurable close delay with countdown (2-15 seconds)
@@ -44,7 +53,8 @@ Preferred communication style: Simple, everyday language.
   - Browser preview mode for development (works in Replit)
   - Custom title bar with draggable region
   - Smooth CSS animations and transitions
-  - Red/black theme matching Aragon branding
+  - Dragon theme color palette (crimson, gold, ember) with Jagex Launcher-inspired design
+  - Card-based layout with glass effects and atmospheric backgrounds
   - Responsive progress indicators with download speed/ETA
   - Settings modal with persistent configuration
 
