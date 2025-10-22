@@ -294,17 +294,6 @@ body {
     width: 280px;
     max-width: 100%;
     height: auto;
-    filter: drop-shadow(0 0 25px var(--glow-primary)) drop-shadow(0 0 12px var(--glow-gold));
-    animation: logoGlow 4s ease-in-out infinite alternate;
-}
-
-@keyframes logoGlow {
-    0% {
-        filter: drop-shadow(0 0 20px var(--glow-primary)) drop-shadow(0 0 10px var(--glow-gold));
-    }
-    100% {
-        filter: drop-shadow(0 0 30px var(--glow-primary)) drop-shadow(0 0 15px var(--glow-gold));
-    }
 }
 
 /* Play Button */
@@ -580,6 +569,7 @@ body {
 }
 
 .setting-item input[type="text"],
+.setting-item input[type="password"],
 .setting-item input[type="number"] {
     width: 100%;
     padding: 12px 14px;
@@ -592,6 +582,7 @@ body {
 }
 
 .setting-item input[type="text"]:focus,
+.setting-item input[type="password"]:focus,
 .setting-item input[type="number"]:focus {
     outline: none;
     border-color: var(--accent-gold);
@@ -924,5 +915,46 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-left: 8px;
+}
+
+/* Custom Alert Modal */
+.custom-alert-modal {
+    z-index: 10000;
+}
+
+.alert-modal-content {
+    width: 450px;
+    max-width: 90%;
+}
+
+.alert-modal-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.alert-modal-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.alert-modal-body {
+    padding: 30px;
+    text-align: center;
+}
+
+.alert-modal-body p {
+    font-size: 15px;
+    color: var(--text-light);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.alert-modal-footer {
+    padding: 20px 30px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
 }
 

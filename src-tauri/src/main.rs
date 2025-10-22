@@ -24,6 +24,19 @@ struct Config {
     close_delay: u8,
 }
 
+// Character
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct Character {
+    id: String,
+    username: String,
+    #[serde(rename = "passwordHash")]
+    password_hash: String,
+    #[serde(rename = "quickLaunch")]
+    quick_launch: bool,
+    #[serde(rename = "createdAt")]
+    created_at: String,
+}
+
 fn default_client_count() -> u8 {
     1
 }
@@ -89,6 +102,16 @@ fn get_config_path() -> PathBuf {
     config_dir.join("config.json")
 }
 
+// Get characters file path
+fn get_characters_path() -> PathBuf {
+    let config_dir = dirs::config_dir()
+        .unwrap_or_else(|| PathBuf::from("."))
+        .join("AragonLauncher");
+    
+    fs::create_dir_all(&config_dir).ok();
+    config_dir.join("characters.json")
+}
+
 // Get client installation directory (same folder as launcher executable)
 fn get_install_dir() -> PathBuf {
     // Get the directory where the launcher executable is located
@@ -121,6 +144,31 @@ fn save_config(config: Config) -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     
     fs::write(&config_path, json)
+        .map_err(|e| e.to_string())?;
+    
+    Ok(())
+}
+
+// Get characters
+#[tauri::command]
+fn get_characters() -> Vec<Character> {
+    let characters_path = get_characters_path();
+    
+    if let Ok(content) = fs::read_to_string(&characters_path) {
+        serde_json::from_str(&content).unwrap_or_else(|_| Vec::new())
+    } else {
+        Vec::new()
+    }
+}
+
+// Save characters
+#[tauri::command]
+fn save_characters(characters: Vec<Character>) -> Result<(), String> {
+    let characters_path = get_characters_path();
+    let json = serde_json::to_string_pretty(&characters)
+        .map_err(|e| e.to_string())?;
+    
+    fs::write(&characters_path, json)
         .map_err(|e| e.to_string())?;
     
     Ok(())
@@ -291,7 +339,7 @@ fn get_java_executable() -> String {
 
 // Launch client
 #[tauri::command]
-fn launch_client(jvm_args: String, client_count: u8) -> Result<(), String> {
+fn launch_client(jvm_args: String, client_count: u8, username: String, password_hash: String) -> Result<(), String> {
     let client_jar = get_install_dir().join("client.jar");
     
     if !client_jar.exists() {
@@ -310,6 +358,14 @@ fn launch_client(jvm_args: String, client_count: u8) -> Result<(), String> {
     
     args.push("-jar".to_string());
     args.push(client_jar.to_string_lossy().to_string());
+    
+    // Add character credentials if provided
+    if !username.is_empty() {
+        args.push(username.clone());
+        if !password_hash.is_empty() {
+            args.push(password_hash.clone());
+        }
+    }
     
     // Launch multiple clients
     for i in 0..count {
@@ -341,6 +397,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             get_config,
             save_config,
+            get_characters,
+            save_characters,
             check_for_updates,
             download_update,
             launch_client

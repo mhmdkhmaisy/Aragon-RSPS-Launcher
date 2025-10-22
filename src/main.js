@@ -47,6 +47,13 @@ const newQuickLaunchCheckbox = document.getElementById('newQuickLaunch');
 const addCharacterBtn = document.getElementById('addCharacterBtn');
 const characterCount = document.getElementById('characterCount');
 
+// Custom alert modal elements
+const customAlertModal = document.getElementById('customAlertModal');
+const alertModalTitle = document.getElementById('alertModalTitle');
+const alertModalMessage = document.getElementById('alertModalMessage');
+const alertOkBtn = document.getElementById('alertOkBtn');
+const alertCancelBtn = document.getElementById('alertCancelBtn');
+
 // State
 let config = {
     jvmArgs: '-Xmx2G -Xms512M',
@@ -62,6 +69,54 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+// Custom Alert Modal Functions
+function showAlert(message, title = 'Alert') {
+    return new Promise((resolve) => {
+        alertModalTitle.textContent = title;
+        alertModalMessage.textContent = message;
+        alertCancelBtn.style.display = 'none';
+        alertOkBtn.textContent = 'OK';
+        
+        const handleOk = () => {
+            customAlertModal.classList.remove('active');
+            alertOkBtn.removeEventListener('click', handleOk);
+            resolve(true);
+        };
+        
+        alertOkBtn.addEventListener('click', handleOk);
+        customAlertModal.classList.add('active');
+    });
+}
+
+function showConfirm(message, title = 'Confirm') {
+    return new Promise((resolve) => {
+        alertModalTitle.textContent = title;
+        alertModalMessage.textContent = message;
+        alertCancelBtn.style.display = 'inline-block';
+        alertOkBtn.textContent = 'Delete';
+        
+        const handleOk = () => {
+            cleanup();
+            resolve(true);
+        };
+        
+        const handleCancel = () => {
+            cleanup();
+            resolve(false);
+        };
+        
+        const cleanup = () => {
+            customAlertModal.classList.remove('active');
+            alertOkBtn.removeEventListener('click', handleOk);
+            alertCancelBtn.removeEventListener('click', handleCancel);
+        };
+        
+        alertOkBtn.addEventListener('click', handleOk);
+        alertCancelBtn.addEventListener('click', handleCancel);
+        customAlertModal.classList.add('active');
+    });
 }
 
 // Update character UI
@@ -135,12 +190,18 @@ function renderCharacterTable() {
     });
     
     characterTableBody.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', async (e) => {
             const id = e.target.getAttribute('data-id');
             const char = characterManager.getAllCharacters().find(c => c.id === id);
-            if (char && confirm(`Are you sure you want to delete character "${char.username}"?`)) {
-                characterManager.deleteCharacter(id);
-                updateCharacterUI();
+            if (char) {
+                const confirmed = await showConfirm(
+                    `Are you sure you want to delete character "${char.username}"?`,
+                    'Delete Character'
+                );
+                if (confirmed) {
+                    characterManager.deleteCharacter(id);
+                    updateCharacterUI();
+                }
             }
         });
     });
@@ -349,8 +410,11 @@ async function launchGame() {
             }
         } else {
             // Browser preview - show message
-            const charInfo = selectedCharacter ? `\nCharacter: ${selectedCharacter.username}` : '\nNo character selected';
-            alert(`In browser preview mode.\n\nIn the desktop app, this would launch ${clientCount} client(s) with:\n${config.jvmArgs}${charInfo}\n\nClose delay: ${config.closeDelay} seconds`);
+            const charInfo = selectedCharacter ? `Character: ${selectedCharacter.username}` : 'No character selected';
+            await showAlert(
+                `In browser preview mode.\n\nIn the desktop app, this would launch ${clientCount} client(s) with:\n${config.jvmArgs}\n${charInfo}\n\nClose delay: ${config.closeDelay} seconds`,
+                'Preview Mode'
+            );
             playButton.disabled = false;
             playButtonText.textContent = 'PLAY';
         }
@@ -458,7 +522,7 @@ function setupEventListeners() {
     });
     
     // Add character button
-    addCharacterBtn.addEventListener('click', () => {
+    addCharacterBtn.addEventListener('click', async () => {
         const username = newUsernameInput.value.trim();
         const password = newPasswordInput.value;
         const quickLaunch = newQuickLaunchCheckbox.checked;
@@ -471,9 +535,9 @@ function setupEventListeners() {
             newQuickLaunchCheckbox.checked = false;
             
             updateCharacterUI();
-            alert(`Character "${username}" added successfully!`);
+            await showAlert(`Character "${username}" added successfully!`, 'Success');
         } catch (error) {
-            alert('Error: ' + error.message);
+            await showAlert(error.message, 'Error');
         }
     });
     
