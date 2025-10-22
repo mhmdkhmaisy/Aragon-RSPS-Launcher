@@ -25,7 +25,7 @@ const settingsModal = document.getElementById('settingsModal');
 const minimizeBtn = document.getElementById('minimize');
 const closeBtn = document.getElementById('close');
 
-// Settings
+// Settings elements
 const jvmArgsInput = document.getElementById('jvmArgs');
 const autoUpdateCheckbox = document.getElementById('autoUpdate');
 const autoLaunchCheckbox = document.getElementById('autoLaunch');

@@ -9,45 +9,110 @@
 </head>
 <body>
     <div class="app">
-        <!-- Custom Title Bar -->
-        <div class="titlebar" data-tauri-drag-region>
-            <div class="titlebar-logo">
-                <img src="/logo.png" alt="Aragon" class="logo-small">
-                <span>Aragon Launcher</span>
+        <!-- Top Navigation Bar -->
+        <div class="navbar" data-tauri-drag-region>
+            <div class="navbar-left">
+                <img src="/logo.png" alt="Aragon" class="navbar-icon">
             </div>
-            <div class="titlebar-controls">
-                <button class="titlebar-button" id="minimize">−</button>
-                <button class="titlebar-button close" id="close">✕</button>
+            <div class="navbar-right">
+                <button class="navbar-button settings-nav" id="settingsButton">Settings ⚙</button>
+                <button class="navbar-button minimize-btn" id="minimize">−</button>
+                <button class="navbar-button close-btn" id="close">✕</button>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="content">
-            <!-- Logo Section -->
-            <div class="logo-section">
-                <img src="/logo.png" alt="Aragon RSPS" class="logo-main">
-            </div>
-
-            <!-- Status Section -->
-            <div class="status-section">
-                <p class="status-text" id="status">Initializing...</p>
-                <div class="progress-container" id="progressContainer" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Left Column: Banner + Recent Updates -->
+            <div class="left-column">
+                <!-- Promotional Banner -->
+                <div class="promo-banner">
+                    <div class="banner-content">
+                        <img src="/logo.png" alt="Aragon RSPS" class="banner-logo">
+                        <h2 class="banner-title">Welcome to Aragon</h2>
+                        <p class="banner-subtitle">Epic adventures await</p>
                     </div>
-                    <p class="progress-details" id="progressDetails"></p>
+                </div>
+
+                <!-- Recent Updates Section -->
+                <div class="recent-updates">
+                    <div class="section-header">
+                        <h3>Recent Updates</h3>
+                        <button class="view-all-btn">View All</button>
+                    </div>
+                    <div class="update-cards">
+                        <div class="update-card">
+                            <div class="update-image">
+                                <div class="update-placeholder">Update 1</div>
+                            </div>
+                            <div class="update-info">
+                                <h4>New Features Released</h4>
+                                <p class="update-date">22 October 2025</p>
+                            </div>
+                        </div>
+                        <div class="update-card">
+                            <div class="update-image">
+                                <div class="update-placeholder">Update 2</div>
+                            </div>
+                            <div class="update-info">
+                                <h4>Performance Improvements</h4>
+                                <p class="update-date">15 October 2025</p>
+                            </div>
+                        </div>
+                        <div class="update-card">
+                            <div class="update-image">
+                                <div class="update-placeholder">Update 3</div>
+                            </div>
+                            <div class="update-info">
+                                <h4>Bug Fixes & Stability</h4>
+                                <p class="update-date">8 October 2025</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Play Button -->
-            <button class="play-button" id="playButton" disabled>
-                <span id="playButtonText">PLAY</span>
-            </button>
+            <!-- Right Sidebar: Logo, Play Button, Settings -->
+            <div class="right-sidebar">
+                <!-- Aragon Logo -->
+                <div class="game-logo-section">
+                    <img src="/logo.png" alt="Aragon RSPS" class="game-logo">
+                </div>
 
-            <!-- Version Info -->
-            <div class="version-info">
-                <span id="versionText">Launcher v1.0.0</span>
-                <button class="settings-button" id="settingsButton">⚙ Settings</button>
+                <!-- Play Button -->
+                <button class="play-button" id="playButton" disabled>
+                    <span id="playButtonText">PLAY</span>
+                </button>
+
+                <!-- Status Section -->
+                <div class="status-section">
+                    <p class="status-text" id="status">Initializing...</p>
+                    <div class="progress-container" id="progressContainer" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p class="progress-details" id="progressDetails"></p>
+                    </div>
+                </div>
+
+                <!-- Account/Character Info -->
+                <div class="account-section">
+                    <div class="account-label">Character</div>
+                    <div class="account-info">
+                        <span>Ready to Play</span>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="quick-links">
+                    <a href="#" class="quick-link">Account settings</a>
+                    <a href="#" class="quick-link">Community Website</a>
+                </div>
+
+                <!-- Version Info -->
+                <div class="version-info">
+                    <span id="versionText">Launcher v1.0.0</span>
+                </div>
             </div>
         </div>
     </div>
