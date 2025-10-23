@@ -12,6 +12,16 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**October 23, 2025** - Character management enhancements
+- Removed multi-client launch option from settings (simplified to single-client launch)
+- Added info icon tooltips next to "Characters" label explaining auto-login functionality
+- Implemented "Quick Play" button that launches all characters with Quick Play enabled simultaneously
+- Modified credential passing format to use `-username:value -password:value` format
+- Added `launch_quick_play` Rust backend function to handle multi-character launches
+- Each Quick Play client launches with its own character credentials
+- Quick Play button displays count of enabled characters and has tooltip explaining functionality
+- Custom tooltip styling with gold-themed overlays matching launcher design
+
 **October 22, 2025** - Jagex Launcher-style redesign with dragon theme
 - Complete UI restructure to match Jagex Launcher layout
 - Two-column layout: left side (promotional banner + Recent Updates), right sidebar (logo + play button)
@@ -86,16 +96,28 @@ Preferred communication style: Simple, everyday language.
 - **Pros**: Bandwidth efficient, secure, familiar pattern (used by Minecraft, RuneLite)
 - **Cons**: Requires maintaining manifest file on server
 
-**JVM Configuration & Multi-Client Support**
-- **Problem**: Users have different hardware capabilities, Java knowledge, and may want to run multiple game clients
-- **Solution**: Built-in JVM arguments configuration with memory allocation controls and multi-client launch (1-3 clients)
-- **Implementation**: Rust-based config system with JSON persistence, backward-compatible deserialization
+**Character Management & Quick Play**
+- **Problem**: Users want to manage multiple character accounts and launch them conveniently
+- **Solution**: Character management system with Quick Play functionality for multi-account launching
+- **Implementation**: 
+  - Character storage with encrypted password hashes (SHA-256)
+  - Up to 3 saved characters per launcher installation
+  - Each character has username, password hash, and Quick Play toggle
+  - Credentials passed to client using `-username:value -password:value` format
 - **Features**:
-  - Customizable JVM arguments for memory optimization
-  - Launch 1-3 game clients simultaneously with 500ms delay between launches
+  - Quick Play button launches all enabled characters simultaneously
+  - Auto-login for selected character when using main Play button
+  - Character selector dropdown with persistent selection
   - Configurable close delay (2-15 seconds) with visual countdown
   - No console windows on Windows (using CREATE_NO_WINDOW flag)
-- **Benefit**: Power users can optimize performance and run multiple clients while casual users get sensible defaults
+  - Customizable JVM arguments for memory optimization
+  - Info tooltips explaining character management and Quick Play functionality
+- **Benefit**: Users can easily switch between characters or launch multiple accounts for efficient gameplay
+
+**JVM Configuration**
+- Built-in JVM arguments configuration with memory allocation controls
+- Rust-based config system with JSON persistence, backward-compatible deserialization
+- Customizable settings for power users while maintaining sensible defaults
 
 ### Distribution & Installation
 
