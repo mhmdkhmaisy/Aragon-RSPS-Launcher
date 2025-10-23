@@ -97,13 +97,23 @@
 
                 <!-- Account/Character Info -->
                 <div class="account-section">
-                    <div class="account-label">Character</div>
+                    <div class="account-label">
+                        Characters
+                        <span class="info-icon" data-tooltip="Automatically login with the selected character's credentials for easy access">ℹ</span>
+                    </div>
                     <div class="account-info">
                         <select id="characterSelect" class="character-selector">
                             <option value="">No character selected</option>
                         </select>
                     </div>
                 </div>
+
+                <!-- Quick Play Button -->
+                <button class="quick-play-button" id="quickPlayButton" disabled>
+                    <span class="quick-play-text">QUICK PLAY</span>
+                    <span class="quick-play-count" id="quickPlayCount">0 characters enabled</span>
+                    <span class="quick-play-tooltip" data-tooltip="Launches all characters with Quick Play enabled at once, each with their own login credentials">ℹ</span>
+                </button>
 
                 <!-- Quick Links -->
                 <div class="quick-links">
@@ -193,10 +203,6 @@
                         <input type="checkbox" id="autoLaunch" checked>
                         Auto launch client on startup
                     </label>
-                </div>
-                <div class="setting-item">
-                    <label for="clientCount">Number of clients to launch: <span id="clientCountValue">1</span></label>
-                    <input type="range" id="clientCount" min="1" max="3" value="1" step="1">
                 </div>
                 <div class="setting-item">
                     <label>

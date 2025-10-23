@@ -30,8 +30,6 @@ const closeBtn = document.getElementById('close');
 const jvmArgsInput = document.getElementById('jvmArgs');
 const autoUpdateCheckbox = document.getElementById('autoUpdate');
 const autoLaunchCheckbox = document.getElementById('autoLaunch');
-const clientCountSlider = document.getElementById('clientCount');
-const clientCountValue = document.getElementById('clientCountValue');
 const closeOnLaunchCheckbox = document.getElementById('closeOnLaunch');
 const closeDelaySlider = document.getElementById('closeDelay');
 const closeDelayValue = document.getElementById('closeDelayValue');
@@ -46,6 +44,8 @@ const newPasswordInput = document.getElementById('newPassword');
 const newQuickLaunchCheckbox = document.getElementById('newQuickLaunch');
 const addCharacterBtn = document.getElementById('addCharacterBtn');
 const characterCount = document.getElementById('characterCount');
+const quickPlayButton = document.getElementById('quickPlayButton');
+const quickPlayCount = document.getElementById('quickPlayCount');
 
 // Custom alert modal elements
 const customAlertModal = document.getElementById('customAlertModal');
@@ -60,7 +60,6 @@ let config = {
     closeOnLaunch: false,
     autoUpdate: true,
     autoLaunch: true,
-    clientCount: 1,
     closeDelay: 5
 };
 
@@ -124,6 +123,22 @@ function updateCharacterUI() {
     updateCharacterSelector();
     renderCharacterTable();
     updateCharacterCount();
+    updateQuickPlayButton();
+}
+
+// Update Quick Play button
+function updateQuickPlayButton() {
+    const characters = characterManager.getAllCharacters();
+    const quickPlayChars = characters.filter(c => c.quickLaunch);
+    const count = quickPlayChars.length;
+    
+    if (count > 0) {
+        quickPlayButton.disabled = false;
+        quickPlayCount.textContent = `${count} character${count > 1 ? 's' : ''} enabled`;
+    } else {
+        quickPlayButton.disabled = true;
+        quickPlayCount.textContent = '0 characters enabled';
+    }
 }
 
 // Update character selector dropdown
@@ -261,8 +276,6 @@ async function loadConfig() {
         jvmArgsInput.value = config.jvmArgs;
         autoUpdateCheckbox.checked = config.autoUpdate;
         autoLaunchCheckbox.checked = config.autoLaunch;
-        clientCountSlider.value = config.clientCount;
-        clientCountValue.textContent = config.clientCount;
         closeOnLaunchCheckbox.checked = config.closeOnLaunch;
         closeDelaySlider.value = config.closeDelay;
         closeDelayValue.textContent = config.closeDelay;
@@ -276,7 +289,6 @@ async function saveConfig() {
     config.jvmArgs = jvmArgsInput.value;
     config.autoUpdate = autoUpdateCheckbox.checked;
     config.autoLaunch = autoLaunchCheckbox.checked;
-    config.clientCount = parseInt(clientCountSlider.value);
     config.closeOnLaunch = closeOnLaunchCheckbox.checked;
     config.closeDelay = parseInt(closeDelaySlider.value);
     
@@ -365,22 +377,19 @@ async function downloadUpdate(updateInfo) {
 async function launchGame() {
     try {
         playButton.disabled = true;
-        const clientCount = config.clientCount;
-        const clientText = clientCount > 1 ? `${clientCount} CLIENTS` : 'CLIENT';
-        playButtonText.textContent = `LAUNCHING ${clientText}...`;
+        playButtonText.textContent = 'LAUNCHING...';
         
         const selectedCharacter = characterManager.getSelectedCharacter();
         
         if (isTauri) {
             await invoke('launch_client', { 
                 jvmArgs: config.jvmArgs,
-                clientCount: clientCount,
                 username: selectedCharacter?.username || '',
                 passwordHash: selectedCharacter?.passwordHash || ''
             });
             
             playButtonText.textContent = 'LAUNCHED';
-            updateStatus(`${clientText} launched successfully`);
+            updateStatus('Client launched successfully');
             
             if (config.closeOnLaunch) {
                 const delay = config.closeDelay * 1000;
@@ -412,7 +421,7 @@ async function launchGame() {
             // Browser preview - show message
             const charInfo = selectedCharacter ? `Character: ${selectedCharacter.username}` : 'No character selected';
             await showAlert(
-                `In browser preview mode.\n\nIn the desktop app, this would launch ${clientCount} client(s) with:\n${config.jvmArgs}\n${charInfo}\n\nClose delay: ${config.closeDelay} seconds`,
+                `In browser preview mode.\n\nIn the desktop app, this would launch the client with:\n${config.jvmArgs}\n${charInfo}\n\nClose delay: ${config.closeDelay} seconds`,
                 'Preview Mode'
             );
             playButton.disabled = false;
@@ -423,6 +432,63 @@ async function launchGame() {
         updateStatus('Launch failed: ' + error);
         playButton.disabled = false;
         playButtonText.textContent = 'PLAY';
+    }
+}
+
+// Launch Quick Play
+async function launchQuickPlay() {
+    try {
+        quickPlayButton.disabled = true;
+        
+        if (isTauri) {
+            await invoke('launch_quick_play', { 
+                jvmArgs: config.jvmArgs
+            });
+            
+            const characters = characterManager.getAllCharacters();
+            const quickPlayChars = characters.filter(c => c.quickLaunch);
+            updateStatus(`Launched ${quickPlayChars.length} client${quickPlayChars.length > 1 ? 's' : ''} with Quick Play`);
+            
+            if (config.closeOnLaunch) {
+                const delay = config.closeDelay * 1000;
+                updateStatus(`Closing in ${config.closeDelay} seconds...`);
+                
+                let remaining = config.closeDelay;
+                const countdown = setInterval(() => {
+                    remaining--;
+                    if (remaining > 0) {
+                        updateStatus(`Closing in ${remaining} seconds...`);
+                    } else {
+                        clearInterval(countdown);
+                    }
+                }, 1000);
+                
+                setTimeout(async () => {
+                    await appWindow.close();
+                }, delay);
+            } else {
+                setTimeout(() => {
+                    quickPlayButton.disabled = false;
+                    updateQuickPlayButton();
+                    updateStatus('Ready to play!');
+                }, 2000);
+            }
+        } else {
+            // Browser preview
+            const characters = characterManager.getAllCharacters();
+            const quickPlayChars = characters.filter(c => c.quickLaunch);
+            const charList = quickPlayChars.map(c => c.username).join(', ');
+            await showAlert(
+                `In browser preview mode.\n\nIn the desktop app, this would launch ${quickPlayChars.length} client(s) with Quick Play:\n${charList}\n\nEach with their own credentials.`,
+                'Preview Mode'
+            );
+            quickPlayButton.disabled = false;
+        }
+    } catch (error) {
+        console.error('Failed to launch Quick Play:', error);
+        updateStatus('Quick Play launch failed: ' + error);
+        quickPlayButton.disabled = false;
+        updateQuickPlayButton();
     }
 }
 
@@ -490,6 +556,9 @@ function setupEventListeners() {
     
     // Play button
     playButton.addEventListener('click', launchGame);
+    
+    // Quick Play button
+    quickPlayButton.addEventListener('click', launchQuickPlay);
     
     // Character selector
     characterSelect.addEventListener('change', (e) => {
@@ -583,13 +652,6 @@ function setupEventListeners() {
         });
     }
     
-    // Update client count value display when slider changes
-    if (clientCountSlider && clientCountValue) {
-        clientCountSlider.addEventListener('input', (e) => {
-            clientCountValue.textContent = e.target.value;
-        });
-    }
-    
     // Update close delay value display when slider changes
     if (closeDelaySlider && closeDelayValue) {
         closeDelaySlider.addEventListener('input', (e) => {
@@ -605,8 +667,6 @@ function setupEventListeners() {
             jvmArgsInput.value = '-Xmx2G -Xms512M';
             autoUpdateCheckbox.checked = true;
             autoLaunchCheckbox.checked = true;
-            clientCountSlider.value = 1;
-            clientCountValue.textContent = '1';
             closeOnLaunchCheckbox.checked = false;
             closeDelaySlider.value = 5;
             closeDelayValue.textContent = '5';

@@ -18,8 +18,6 @@ struct Config {
     auto_update: bool,
     #[serde(rename = "autoLaunch")]
     auto_launch: bool,
-    #[serde(rename = "clientCount", default = "default_client_count")]
-    client_count: u8,
     #[serde(rename = "closeDelay", default = "default_close_delay")]
     close_delay: u8,
 }
@@ -37,10 +35,6 @@ struct Character {
     created_at: String,
 }
 
-fn default_client_count() -> u8 {
-    1
-}
-
 fn default_close_delay() -> u8 {
     5
 }
@@ -52,7 +46,6 @@ impl Default for Config {
             close_on_launch: false,
             auto_update: true,
             auto_launch: true,
-            client_count: 1,
             close_delay: 5,
         }
     }
@@ -339,15 +332,12 @@ fn get_java_executable() -> String {
 
 // Launch client
 #[tauri::command]
-fn launch_client(jvm_args: String, client_count: u8, username: String, password_hash: String) -> Result<(), String> {
+fn launch_client(jvm_args: String, username: String, password_hash: String) -> Result<(), String> {
     let client_jar = get_install_dir().join("client.jar");
     
     if !client_jar.exists() {
         return Err("Client JAR not found".to_string());
     }
-    
-    // Validate client count (1-3)
-    let count = client_count.clamp(1, 3);
     
     let java_path = get_java_executable();
     
@@ -359,16 +349,67 @@ fn launch_client(jvm_args: String, client_count: u8, username: String, password_
     args.push("-jar".to_string());
     args.push(client_jar.to_string_lossy().to_string());
     
-    // Add character credentials if provided
+    // Add character credentials if provided with -username: and -password: format
     if !username.is_empty() {
-        args.push(username.clone());
+        args.push(format!("-username:{}", username));
         if !password_hash.is_empty() {
-            args.push(password_hash.clone());
+            args.push(format!("-password:{}", password_hash));
         }
     }
     
-    // Launch multiple clients
-    for i in 0..count {
+    let mut command = Command::new(&java_path);
+    command.args(&args).current_dir(get_install_dir());
+    
+    // Hide console window on Windows
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        command.creation_flags(CREATE_NO_WINDOW);
+    }
+    
+    command.spawn()
+        .map_err(|e| format!("Failed to launch client with {}: {}", java_path, e))?;
+    
+    Ok(())
+}
+
+// Launch Quick Play - launches all characters with quickLaunch enabled
+#[tauri::command]
+fn launch_quick_play(jvm_args: String) -> Result<(), String> {
+    let client_jar = get_install_dir().join("client.jar");
+    
+    if !client_jar.exists() {
+        return Err("Client JAR not found".to_string());
+    }
+    
+    // Get all characters with quick launch enabled
+    let characters = get_characters();
+    let quick_play_chars: Vec<Character> = characters
+        .into_iter()
+        .filter(|c| c.quick_launch)
+        .collect();
+    
+    if quick_play_chars.is_empty() {
+        return Err("No characters with Quick Play enabled".to_string());
+    }
+    
+    let java_path = get_java_executable();
+    
+    // Launch a client for each quick play character
+    for (i, character) in quick_play_chars.iter().enumerate() {
+        let mut args: Vec<String> = jvm_args
+            .split_whitespace()
+            .map(|s| s.to_string())
+            .collect();
+        
+        args.push("-jar".to_string());
+        args.push(client_jar.to_string_lossy().to_string());
+        
+        // Add character credentials with -username: and -password: format
+        args.push(format!("-username:{}", character.username));
+        args.push(format!("-password:{}", character.password_hash));
+        
         let mut command = Command::new(&java_path);
         command.args(&args).current_dir(get_install_dir());
         
@@ -381,10 +422,11 @@ fn launch_client(jvm_args: String, client_count: u8, username: String, password_
         }
         
         command.spawn()
-            .map_err(|e| format!("Failed to launch client {} with {}: {}", i + 1, java_path, e))?;
+            .map_err(|e| format!("Failed to launch client {} for {} with {}: {}", 
+                i + 1, character.username, java_path, e))?;
         
         // Small delay between launches to avoid conflicts
-        if i < count - 1 {
+        if i < quick_play_chars.len() - 1 {
             std::thread::sleep(std::time::Duration::from_millis(500));
         }
     }
@@ -401,7 +443,8 @@ fn main() {
             save_characters,
             check_for_updates,
             download_update,
-            launch_client
+            launch_client,
+            launch_quick_play
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
