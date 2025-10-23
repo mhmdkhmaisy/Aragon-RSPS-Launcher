@@ -123,7 +123,7 @@
 
                 <!-- Version Info -->
                 <div class="version-info">
-                    <span id="versionText">Launcher v1.0.0</span>
+                    <span id="versionText">Launcher v1.4.0</span>
                 </div>
             </div>
         </div>
@@ -182,37 +182,107 @@
 
     <!-- Settings Modal -->
     <div class="modal" id="settingsModal">
-        <div class="modal-content">
+        <div class="modal-content settings-modal-wide">
             <div class="modal-header">
                 <h2>Settings</h2>
                 <button class="modal-close" id="closeSettings">✕</button>
             </div>
-            <div class="modal-body">
-                <div class="setting-item">
-                    <label for="jvmArgs">JVM Arguments:</label>
-                    <input type="text" id="jvmArgs" value="-Xmx2G -Xms512M" placeholder="-Xmx2G -Xms512M">
+            <div class="settings-container">
+                <div class="settings-sidebar">
+                    <button class="settings-tab active" data-tab="general">General</button>
+                    <button class="settings-tab" data-tab="whats-new">What's New?</button>
                 </div>
-                <div class="setting-item">
-                    <label>
-                        <input type="checkbox" id="autoUpdate" checked>
-                        Automatically check for updates
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label>
-                        <input type="checkbox" id="autoLaunch" checked>
-                        Auto launch client on startup
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label>
-                        <input type="checkbox" id="closeOnLaunch">
-                        Close launcher when game starts
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label for="closeDelay">Close delay: <span id="closeDelayValue">5</span> seconds</label>
-                    <input type="range" id="closeDelay" min="2" max="15" value="5" step="1">
+                <div class="settings-content">
+                    <!-- General Tab -->
+                    <div class="settings-tab-content active" id="generalTab">
+                        <h3 class="tab-title">General Settings</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="autoUpdate" checked disabled>
+                                Automatically check for updates (Required)
+                            </label>
+                            <p class="setting-description">Updates are checked automatically to ensure you have the latest features and security fixes.</p>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="closeOnLaunch">
+                                Close launcher when game starts
+                            </label>
+                            <p class="setting-description">The launcher will close after launching the game client.</p>
+                        </div>
+                        <div class="setting-item">
+                            <label for="closeDelay">Close delay: <span id="closeDelayValue">5</span> seconds</label>
+                            <input type="range" id="closeDelay" min="2" max="15" value="5" step="1">
+                            <p class="setting-description">Time to wait before closing the launcher (when enabled).</p>
+                        </div>
+                    </div>
+
+                    <!-- What's New Tab -->
+                    <div class="settings-tab-content" id="whatsNewTab">
+                        <h3 class="tab-title">What's New?</h3>
+                        <div class="updates-list" id="updatesList">
+                            <!-- Updates will be loaded dynamically from replit.md -->
+                            <div class="update-entry">
+                                <h4>Version 1.4.0 - October 23, 2025</h4>
+                                <p class="update-subtitle">Settings Redesign & Character Management</p>
+                                <ul>
+                                    <li>Redesigned settings modal with tabbed sidebar navigation</li>
+                                    <li>Added "What's New?" tab displaying launcher update history</li>
+                                    <li>Simplified settings to focus on essential options</li>
+                                    <li>Made auto-update mandatory for improved security and stability</li>
+                                    <li>Implemented "Quick Play" button for launching multiple characters simultaneously</li>
+                                    <li>Enhanced credential handling for secure character authentication</li>
+                                    <li>Added info tooltips throughout the interface for better user guidance</li>
+                                    <li>Quick Play button displays real-time count of enabled characters</li>
+                                    <li>Custom tooltip styling with gold-themed overlays matching launcher design</li>
+                                </ul>
+                            </div>
+                            <div class="update-entry">
+                                <h4>Version 1.3.0 - October 22, 2025</h4>
+                                <p class="update-subtitle">Complete Launcher Redesign</p>
+                                <ul>
+                                    <li>Complete UI restructure with modern two-column layout</li>
+                                    <li>Left panel featuring promotional banner and Recent Updates section</li>
+                                    <li>Right sidebar with game logo and action buttons</li>
+                                    <li>Top navigation bar with Aragon icon and Settings button</li>
+                                    <li>Dragon theme color palette (crimson, gold, ember tones)</li>
+                                    <li>Multi-layered gradient backgrounds with atmospheric depth</li>
+                                    <li>Enhanced visual effects including glows, shadows, and smooth animations</li>
+                                    <li>Premium button designs with crimson-to-gold hover gradients</li>
+                                    <li>Glass-effect cards with warm brown-tinted borders</li>
+                                    <li>Clean, polished interface without overlapping elements</li>
+                                </ul>
+                            </div>
+                            <div class="update-entry">
+                                <h4>Version 1.2.0 - October 10, 2025</h4>
+                                <p class="update-subtitle">Enhanced Features & Performance</p>
+                                <ul>
+                                    <li>Added character management system with saved credentials</li>
+                                    <li>Implemented configurable close delay with visual countdown (2-15 seconds)</li>
+                                    <li>Fixed console window visibility on Windows for cleaner experience</li>
+                                    <li>Added backward-compatible configuration system</li>
+                                    <li>Platform-specific JRE bundling for streamlined deployment</li>
+                                    <li>Improved launcher stability and error handling</li>
+                                </ul>
+                            </div>
+                            <div class="update-entry">
+                                <h4>Version 1.0.0 - October 10, 2025</h4>
+                                <p class="update-subtitle">Tauri Architecture Migration</p>
+                                <ul>
+                                    <li>Complete rebuild using Tauri (Rust + Web Technologies)</li>
+                                    <li>Reduced installer size from ~60MB to ~3-5MB (94% reduction)</li>
+                                    <li>Modern web-based UI with HTML/CSS/JavaScript</li>
+                                    <li>Implemented secure Rust backend for auto-updates and client launching</li>
+                                    <li>Added Vite development server for rapid UI development</li>
+                                    <li>Dual-mode operation: browser preview and desktop distribution</li>
+                                    <li>SHA-256 hash verification for secure file downloads</li>
+                                    <li>Real-time progress tracking with speed and ETA display</li>
+                                    <li>Cross-platform support: Windows, macOS, and Linux</li>
+                                    <li>Professional native installers with auto-uninstall support</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

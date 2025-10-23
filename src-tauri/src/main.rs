@@ -10,14 +10,10 @@ use tauri::Window;
 // Configuration
 #[derive(Debug, Serialize, Deserialize, Clone)]
 struct Config {
-    #[serde(rename = "jvmArgs")]
-    jvm_args: String,
     #[serde(rename = "closeOnLaunch")]
     close_on_launch: bool,
     #[serde(rename = "autoUpdate")]
     auto_update: bool,
-    #[serde(rename = "autoLaunch")]
-    auto_launch: bool,
     #[serde(rename = "closeDelay", default = "default_close_delay")]
     close_delay: u8,
 }
@@ -42,10 +38,8 @@ fn default_close_delay() -> u8 {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            jvm_args: "-Xmx2G -Xms512M".to_string(),
             close_on_launch: false,
             auto_update: true,
-            auto_launch: true,
             close_delay: 5,
         }
     }
@@ -332,7 +326,7 @@ fn get_java_executable() -> String {
 
 // Launch client
 #[tauri::command]
-fn launch_client(jvm_args: String, username: String, password_hash: String) -> Result<(), String> {
+fn launch_client(username: String, password_hash: String) -> Result<(), String> {
     let client_jar = get_install_dir().join("client.jar");
     
     if !client_jar.exists() {
@@ -341,6 +335,8 @@ fn launch_client(jvm_args: String, username: String, password_hash: String) -> R
     
     let java_path = get_java_executable();
     
+    // Use default JVM arguments
+    let jvm_args = "-Xmx2G -Xms512M";
     let mut args: Vec<String> = jvm_args
         .split_whitespace()
         .map(|s| s.to_string())
@@ -376,7 +372,7 @@ fn launch_client(jvm_args: String, username: String, password_hash: String) -> R
 
 // Launch Quick Play - launches all characters with quickLaunch enabled
 #[tauri::command]
-fn launch_quick_play(jvm_args: String) -> Result<(), String> {
+fn launch_quick_play() -> Result<(), String> {
     let client_jar = get_install_dir().join("client.jar");
     
     if !client_jar.exists() {
@@ -395,6 +391,9 @@ fn launch_quick_play(jvm_args: String) -> Result<(), String> {
     }
     
     let java_path = get_java_executable();
+    
+    // Use default JVM arguments
+    let jvm_args = "-Xmx2G -Xms512M";
     
     // Launch a client for each quick play character
     for (i, character) in quick_play_chars.iter().enumerate() {

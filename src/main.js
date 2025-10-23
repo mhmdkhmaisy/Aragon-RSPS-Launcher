@@ -27,9 +27,7 @@ const minimizeBtn = document.getElementById('minimize');
 const closeBtn = document.getElementById('close');
 
 // Settings elements
-const jvmArgsInput = document.getElementById('jvmArgs');
 const autoUpdateCheckbox = document.getElementById('autoUpdate');
-const autoLaunchCheckbox = document.getElementById('autoLaunch');
 const closeOnLaunchCheckbox = document.getElementById('closeOnLaunch');
 const closeDelaySlider = document.getElementById('closeDelay');
 const closeDelayValue = document.getElementById('closeDelayValue');
@@ -56,10 +54,8 @@ const alertCancelBtn = document.getElementById('alertCancelBtn');
 
 // State
 let config = {
-    jvmArgs: '-Xmx2G -Xms512M',
     closeOnLaunch: false,
     autoUpdate: true,
-    autoLaunch: true,
     closeDelay: 5
 };
 
@@ -244,18 +240,8 @@ async function init() {
     // Set up event listeners
     setupEventListeners();
     
-    // Check for updates
-    if (config.autoUpdate) {
-        await checkForUpdates();
-    } else {
-        updateStatus('Ready to play!');
-        playButton.disabled = false;
-        
-        // Auto launch if updates are disabled but auto launch is enabled
-        if (config.autoLaunch) {
-            setTimeout(() => launchGame(), 500);
-        }
-    }
+    // Check for updates (always enabled)
+    await checkForUpdates();
 }
 
 // Load configuration
@@ -273,9 +259,6 @@ async function loadConfig() {
         }
         
         // Update UI
-        jvmArgsInput.value = config.jvmArgs;
-        autoUpdateCheckbox.checked = config.autoUpdate;
-        autoLaunchCheckbox.checked = config.autoLaunch;
         closeOnLaunchCheckbox.checked = config.closeOnLaunch;
         closeDelaySlider.value = config.closeDelay;
         closeDelayValue.textContent = config.closeDelay;
@@ -286,11 +269,10 @@ async function loadConfig() {
 
 // Save configuration
 async function saveConfig() {
-    config.jvmArgs = jvmArgsInput.value;
-    config.autoUpdate = autoUpdateCheckbox.checked;
-    config.autoLaunch = autoLaunchCheckbox.checked;
     config.closeOnLaunch = closeOnLaunchCheckbox.checked;
     config.closeDelay = parseInt(closeDelaySlider.value);
+    // autoUpdate is always true, no need to save
+    config.autoUpdate = true;
     
     try {
         if (isTauri) {
@@ -320,11 +302,6 @@ async function checkForUpdates() {
                 } else {
                     updateStatus('Ready to play!');
                     playButton.disabled = false;
-                }
-                
-                // Auto launch if enabled and ready
-                if (config.autoLaunch && !playButton.disabled) {
-                    setTimeout(() => launchGame(), 500);
                 }
             } catch (invokeError) {
                 console.error('Tauri invoke failed:', invokeError);
@@ -361,11 +338,6 @@ async function downloadUpdate(updateInfo) {
         updateStatus('Update complete - Ready to play!');
         progressContainer.style.display = 'none';
         playButton.disabled = false;
-        
-        // Auto launch if enabled
-        if (config.autoLaunch) {
-            setTimeout(() => launchGame(), 500);
-        }
     } catch (error) {
         console.error('Download failed:', error);
         updateStatus('Download failed: ' + error);
@@ -383,7 +355,6 @@ async function launchGame() {
         
         if (isTauri) {
             await invoke('launch_client', { 
-                jvmArgs: config.jvmArgs,
                 username: selectedCharacter?.username || '',
                 passwordHash: selectedCharacter?.passwordHash || ''
             });
@@ -421,7 +392,7 @@ async function launchGame() {
             // Browser preview - show message
             const charInfo = selectedCharacter ? `Character: ${selectedCharacter.username}` : 'No character selected';
             await showAlert(
-                `In browser preview mode.\n\nIn the desktop app, this would launch the client with:\n${config.jvmArgs}\n${charInfo}\n\nClose delay: ${config.closeDelay} seconds`,
+                `In browser preview mode.\n\nIn the desktop app, this would launch the client.\n${charInfo}\n\nClose delay: ${config.closeDelay} seconds`,
                 'Preview Mode'
             );
             playButton.disabled = false;
@@ -441,9 +412,7 @@ async function launchQuickPlay() {
         quickPlayButton.disabled = true;
         
         if (isTauri) {
-            await invoke('launch_quick_play', { 
-                jvmArgs: config.jvmArgs
-            });
+            await invoke('launch_quick_play');
             
             const characters = characterManager.getAllCharacters();
             const quickPlayChars = characters.filter(c => c.quickLaunch);
@@ -664,14 +633,34 @@ function setupEventListeners() {
     if (resetSettingsBtn) {
         resetSettingsBtn.addEventListener('click', () => {
             // Reset to defaults
-            jvmArgsInput.value = '-Xmx2G -Xms512M';
-            autoUpdateCheckbox.checked = true;
-            autoLaunchCheckbox.checked = true;
             closeOnLaunchCheckbox.checked = false;
             closeDelaySlider.value = 5;
             closeDelayValue.textContent = '5';
         });
     }
+    
+    // Settings tab switching
+    const settingsTabs = document.querySelectorAll('.settings-tab');
+    const settingsTabContents = document.querySelectorAll('.settings-tab-content');
+    
+    settingsTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetTab = tab.getAttribute('data-tab');
+            
+            // Remove active class from all tabs and contents
+            settingsTabs.forEach(t => t.classList.remove('active'));
+            settingsTabContents.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Show corresponding content
+            const targetContent = document.getElementById(targetTab === 'general' ? 'generalTab' : 'whatsNewTab');
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
 }
 
 // Utility
