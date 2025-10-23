@@ -12,17 +12,21 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**October 23, 2025** - Character management enhancements
-- Removed multi-client launch option from settings (simplified to single-client launch)
-- Added info icon tooltips next to "Characters" label explaining auto-login functionality
-- Implemented "Quick Play" button that launches all characters with Quick Play enabled simultaneously
-- Modified credential passing format to use `-username:value -password:value` format
-- Added `launch_quick_play` Rust backend function to handle multi-character launches
-- Each Quick Play client launches with its own character credentials
-- Quick Play button displays count of enabled characters and has tooltip explaining functionality
+**October 23, 2025 - Version 1.4.0** - Settings Redesign & Character Management
+- Redesigned settings modal with tabbed sidebar navigation (General and What's New tabs)
+- Added "What's New?" tab displaying versioned launcher update history
+- Simplified settings to focus on essential options only
+- Made auto-update mandatory for improved security and stability (cannot be disabled)
+- Removed JVM arguments customization (now uses optimized defaults)
+- Removed auto-launch option (manual launch only for better user control)
+- Implemented "Quick Play" button for launching multiple characters simultaneously
+- Enhanced credential handling for secure character authentication
+- Added info tooltips throughout the interface for better user guidance
+- Quick Play button displays real-time count of enabled characters with explanatory tooltip
 - Custom tooltip styling with gold-themed overlays matching launcher design
+- Updated launcher version display to v1.4.0
 
-**October 22, 2025** - Jagex Launcher-style redesign with dragon theme
+**October 22, 2025 - Version 1.3.0** - Complete Launcher Redesign
 - Complete UI restructure to match Jagex Launcher layout
 - Two-column layout: left side (promotional banner + Recent Updates), right sidebar (logo + play button)
 - Top navigation bar with Aragon icon and Settings button
@@ -34,14 +38,14 @@ Preferred communication style: Simple, everyday language.
 - Glass-effect cards with warm brown-tinted borders
 - Clean, modern layout without crossed widgets
 
-**October 10, 2025** - Enhanced launcher features
+**October 10, 2025 - Version 1.2.0** - Enhanced Features & Performance
 - Added multi-client launch support (1-3 clients simultaneously)
 - Implemented configurable close delay with countdown (2-15 seconds)
 - Fixed console window visibility on Windows (launcher and game clients run without CMD window)
 - Added backward-compatible config system to preserve user settings during updates
 - Platform-specific JRE bundling using Tauri configuration files
 
-**October 10, 2025** - Migrated to Tauri architecture
+**October 10, 2025 - Version 1.0.0** - Tauri Architecture Migration
 - Rebuilt launcher using Tauri (Rust + Web Technologies) for ultra-lightweight installers
 - Created modern web UI with HTML/CSS/JavaScript that previews in Replit
 - Implemented Rust backend for secure auto-updates and client launching
