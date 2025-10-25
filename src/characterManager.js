@@ -9,7 +9,7 @@ if (isTauri) {
 
 const STORAGE_KEY = 'aragon_characters';
 const MAX_CHARACTERS = 10;
-const MAX_QUICK_PLAY = 3;
+const MAX_QUICK_PLAY = 2;
 const ENCRYPTION_KEY = 'ARAGON-LAUNCHER-SECRET-KEY-2025'; // Encryption salt/key
 
 class CharacterManager {
