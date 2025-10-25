@@ -193,10 +193,16 @@ function renderCharacterTable() {
     `).join('');
     
     characterTableBody.querySelectorAll('.quick-launch-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', (e) => {
+        checkbox.addEventListener('change', async (e) => {
             const id = e.target.getAttribute('data-id');
-            characterManager.toggleQuickLaunch(id);
-            updateCharacterUI();
+            try {
+                characterManager.toggleQuickLaunch(id);
+                updateCharacterUI();
+            } catch (error) {
+                // Revert checkbox if error occurs
+                e.target.checked = !e.target.checked;
+                await showAlert(error.message, 'Quick Play Limit');
+            }
         });
     });
     
@@ -221,8 +227,22 @@ function renderCharacterTable() {
 // Update character count display
 function updateCharacterCount() {
     const count = characterManager.getAllCharacters().length;
-    characterCount.textContent = `${count} / 3 characters`;
+    characterCount.textContent = `${count} / 10 characters`;
     addCharacterBtn.disabled = !characterManager.canAddMore();
+    updateQuickPlayLimitInfo();
+}
+
+// Update Quick Play limit info display
+function updateQuickPlayLimitInfo() {
+    const quickPlayCount = characterManager.getQuickPlayCount();
+    const maxQuickPlay = characterManager.getMaxQuickPlay();
+    const quickPlayLimitInfo = document.getElementById('quickPlayLimitInfo');
+    
+    if (quickPlayCount >= maxQuickPlay) {
+        quickPlayLimitInfo.style.display = 'flex';
+    } else {
+        quickPlayLimitInfo.style.display = 'none';
+    }
 }
 
 // Initialize

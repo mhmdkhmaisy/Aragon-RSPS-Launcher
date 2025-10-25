@@ -357,12 +357,12 @@ fn launch_client(username: String, password: String) -> Result<(), String> {
     let mut command = Command::new(&java_path);
     command.args(&args).current_dir(get_install_dir());
     
-    // Create a new console window on Windows so users can see errors and output
+    // Hide console window on Windows
     #[cfg(target_os = "windows")]
     {
         use std::os::windows::process::CommandExt;
-        const CREATE_NEW_CONSOLE: u32 = 0x00000010;
-        command.creation_flags(CREATE_NEW_CONSOLE);
+        const CREATE_NO_WINDOW: u32 = 0x08000000;
+        command.creation_flags(CREATE_NO_WINDOW);
     }
     
     command.spawn()
@@ -414,12 +414,12 @@ fn launch_quick_play(credentials: Vec<QuickPlayCredentials>) -> Result<(), Strin
         let mut command = Command::new(&java_path);
         command.args(&args).current_dir(get_install_dir());
         
-        // Create a new console window on Windows so users can see errors and output
+        // Hide console window on Windows
         #[cfg(target_os = "windows")]
         {
             use std::os::windows::process::CommandExt;
-            const CREATE_NEW_CONSOLE: u32 = 0x00000010;
-            command.creation_flags(CREATE_NEW_CONSOLE);
+            const CREATE_NO_WINDOW: u32 = 0x08000000;
+            command.creation_flags(CREATE_NO_WINDOW);
         }
         
         command.spawn()

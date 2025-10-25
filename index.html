@@ -156,6 +156,13 @@
 
                 <div class="add-character-section">
                     <h3>Add New Character</h3>
+                    
+                    <!-- Quick Play Limit Info -->
+                    <div class="quick-play-limit-info" id="quickPlayLimitInfo" style="display: none;">
+                        <span class="info-icon">ℹ</span>
+                        <span class="info-text">Maximum 3 characters can have Quick Play enabled. Disable one to enable another.</span>
+                    </div>
+                    
                     <div class="setting-item">
                         <label for="newUsername">Username:</label>
                         <input type="text" id="newUsername" placeholder="Enter username" maxlength="20">
@@ -174,7 +181,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <div class="character-count" id="characterCount">0 / 3 characters</div>
+                <div class="character-count" id="characterCount">0 / 10 characters</div>
                 <button class="button-secondary" id="closeCharacterModalBtn">Close</button>
             </div>
         </div>

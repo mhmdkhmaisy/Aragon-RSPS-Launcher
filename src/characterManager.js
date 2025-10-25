@@ -8,7 +8,8 @@ if (isTauri) {
 }
 
 const STORAGE_KEY = 'aragon_characters';
-const MAX_CHARACTERS = 3;
+const MAX_CHARACTERS = 10;
+const MAX_QUICK_PLAY = 3;
 const ENCRYPTION_KEY = 'ARAGON-LAUNCHER-SECRET-KEY-2025'; // Encryption salt/key
 
 class CharacterManager {
@@ -127,12 +128,24 @@ class CharacterManager {
             throw new Error('Character not found');
         }
 
+        // If enabling quick launch, check if we've reached the limit
         if (!character.quickLaunch) {
-            this.characters.forEach(c => c.quickLaunch = false);
+            const quickPlayCount = this.characters.filter(c => c.quickLaunch).length;
+            if (quickPlayCount >= MAX_QUICK_PLAY) {
+                throw new Error(`Maximum ${MAX_QUICK_PLAY} characters can have Quick Play enabled`);
+            }
         }
 
         character.quickLaunch = !character.quickLaunch;
         this.saveCharacters();
+    }
+    
+    getQuickPlayCount() {
+        return this.characters.filter(c => c.quickLaunch).length;
+    }
+    
+    getMaxQuickPlay() {
+        return MAX_QUICK_PLAY;
     }
 
     getSelectedCharacter() {

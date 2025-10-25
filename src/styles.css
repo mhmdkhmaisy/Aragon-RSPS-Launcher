@@ -1051,6 +1051,30 @@ body {
     letter-spacing: 0.5px;
 }
 
+/* Quick Play Limit Info */
+.quick-play-limit-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: rgba(212, 165, 116, 0.1);
+    border: 1px solid rgba(212, 165, 116, 0.3);
+    border-radius: 6px;
+}
+
+.quick-play-limit-info .info-icon {
+    font-size: 18px;
+    color: var(--accent-gold);
+    font-weight: bold;
+}
+
+.quick-play-limit-info .info-text {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.4;
+}
+
 .character-count {
     font-size: 13px;
     color: var(--text-muted);
