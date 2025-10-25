@@ -2,7 +2,7 @@ const fs = require('fs');
 const https = require('https');
 const path = require('path');
 
-const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1431683500205150311/qQuUNDSiOEWhN0C-zr6K5KWCjBMncqjKqvuSjKv2MIw8UEGX8tlW4eso-p1_nnj8_n7H";
 
 if (!WEBHOOK_URL) {
   console.error('Error: DISCORD_WEBHOOK_URL environment variable is not set');

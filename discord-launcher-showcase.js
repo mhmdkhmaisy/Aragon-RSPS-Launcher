@@ -2,7 +2,8 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
+const WEBHOOK_URL = "https://discord.com/api/webhooks/1431695350779088929/p_jz1_C-UqrurXBZuD9XHsLrCFNy-H4cM_UrGSw8VNqeyJEJfo1QG_SVIDIT0n0vkt7A";
+
 
 if (!WEBHOOK_URL) {
   console.error('Error: DISCORD_WEBHOOK_URL environment variable is not set');
@@ -105,15 +106,15 @@ async function sendShowcase() {
   try {
     console.log('📢 Starting Aragon RSPS Launcher showcase...\n');
 
-    await new Promise((resolve, reject) => {
-      sendMessage('# 🐉 Aragon RSPS Launcher - Feature Showcase\n\nExperience the most advanced RSPS launcher built for modern players!', (err) => {
-        if (err) reject(err);
-        else {
-          console.log('✅ Sent intro message');
-          resolve();
-        }
-      });
-    });
+    // await new Promise((resolve, reject) => {
+    //   sendMessage('', (err) => {
+    //     if (err) reject(err);
+    //     else {
+    //       console.log('✅ Sent intro message');
+    //       resolve();
+    //     }
+    //   });
+    // });
 
     await sleep(1000);
 
@@ -123,6 +124,10 @@ async function sendShowcase() {
     console.log('   3. Run this script again\n');
 
     const screenshots = [
+      {
+        path: 'launcher_screenshots/aragon_logo.png',
+        text: ''
+      },
       {
         path: 'launcher_screenshots/main.png',
         text: '**🎮 Main Launcher Interface**\n\nClean, modern design with the Aragon logo front and center. The launcher shows:\n• Big, obvious PLAY button\n• Character selector dropdown\n• Quick Play button for launching multiple characters\n• Recent updates section to keep you informed\n• Links to character management and community website'
@@ -134,6 +139,10 @@ async function sendShowcase() {
       {
         path: 'launcher_screenshots/characters.png',
         text: '**👥 Character Management**\n\nManage all your characters in one place:\n• Add unlimited characters with usernames and passwords\n• Mark characters for Quick Play to launch them all at once\n• Select which character to use as default\n• Passwords are encrypted and stored securely\n• Delete characters you no longer need'
+      },
+      {
+        path: '',
+        text: '**Visit us on ** [aragon-data.live/play](https://aragon-data.live/play) **to download the launcher and start your adventure today!**'
       }
     ];
 
@@ -154,14 +163,7 @@ async function sendShowcase() {
 
     await new Promise((resolve, reject) => {
       sendMessage(
-        '**✨ Key Features**\n\n' +
-        '🚀 **Ultra Lightweight** - Only 3-5MB installer\n' +
-        '🔄 **Auto-Updates** - Always stay current\n' +
-        '🔒 **Secure** - Encrypted password storage\n' +
-        '💻 **Cross-Platform** - Windows, macOS, Linux\n' +
-        '☕ **No Java Required** - Everything bundled for you\n' +
-        '⚡ **Quick Play** - Launch multiple characters simultaneously\n\n' +
-        'Join Aragon RSPS today! 🐉',
+        '**Visit us on ** [aragon-data.live/play](https://aragon-data.live/play) **to download the launcher and start your adventure today!**',
         (err) => {
           if (err) reject(err);
           else {
