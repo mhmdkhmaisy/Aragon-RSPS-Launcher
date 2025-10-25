@@ -12,12 +12,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-**October 25, 2025 - Version 1.4.1** - Console Window Visibility & UI Improvements
-- Changed client launch to use CREATE_NEW_CONSOLE flag on Windows
-- Java client processes now display in their own console window for error debugging
-- Fixed Play button text overflow by reducing letter-spacing (2px → 1px)
-- Improved button text layout with flexbox centering and minimum height
-- Users can now see command-line arguments and client errors locally during testing
+**October 25, 2025 - Version 1.4.2** - Password Encryption & Character Limits Update
+- Changed from SHA256 hashing to AES encryption for password storage (allows decryption for client launch)
+- Passwords now stored encrypted and decrypted just-in-time before passing to client
+- Updated Rust backend to accept plain password instead of hash
+- Increased character limit from 3 to 10 characters per launcher
+- Maintained 3 character limit for Quick Play functionality
+- Added visual info alert in character modal when 3 Quick Play slots are full
+- Improved error handling with user-friendly alerts when Quick Play limit reached
+- Reverted console window behavior (no console windows shown on Windows)
 
 **October 23, 2025 - Version 1.4.0** - Settings Redesign & Character Management
 - Redesigned settings modal with tabbed sidebar navigation (General and What's New tabs)
@@ -113,7 +116,8 @@ Preferred communication style: Simple, everyday language.
 - **Implementation**: 
   - Character storage with AES-encrypted passwords (can be decrypted for client launch)
   - Encryption key: `ARAGON-LAUNCHER-SECRET-KEY-2025`
-  - Up to 3 saved characters per launcher installation
+  - Up to 10 saved characters per launcher installation
+  - Maximum 3 characters can have Quick Play enabled simultaneously
   - Each character has username, encrypted password, and Quick Play toggle
   - Passwords are decrypted in JavaScript before passing to client
   - Credentials passed to client using `-username:value -password:value` format (plain text)
@@ -135,7 +139,7 @@ Preferred communication style: Simple, everyday language.
   - Auto-login for selected character when using main Play button
   - Character selector dropdown with persistent selection
   - Configurable close delay (2-15 seconds) with visual countdown
-  - Console windows visible on Windows (using CREATE_NEW_CONSOLE flag) for debugging
+  - No console windows on Windows (using CREATE_NO_WINDOW flag)
   - Customizable JVM arguments for memory optimization
   - Info tooltips explaining character management and Quick Play functionality
 - **Benefit**: Users can easily switch between characters or launch multiple accounts for efficient gameplay
