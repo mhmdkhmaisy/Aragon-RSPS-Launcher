@@ -111,16 +111,31 @@ Preferred communication style: Simple, everyday language.
 - **Problem**: Users want to manage multiple character accounts and launch them conveniently
 - **Solution**: Character management system with Quick Play functionality for multi-account launching
 - **Implementation**: 
-  - Character storage with encrypted password hashes (SHA-256)
+  - Character storage with AES-encrypted passwords (can be decrypted for client launch)
+  - Encryption key: `ARAGON-LAUNCHER-SECRET-KEY-2025`
   - Up to 3 saved characters per launcher installation
-  - Each character has username, password hash, and Quick Play toggle
-  - Credentials passed to client using `-username:value -password:value` format
+  - Each character has username, encrypted password, and Quick Play toggle
+  - Passwords are decrypted in JavaScript before passing to client
+  - Credentials passed to client using `-username:value -password:value` format (plain text)
+- **Password Encryption/Decryption**:
+  - **Encryption**: Uses CryptoJS AES encryption with a fixed key
+  - **Storage**: Passwords stored encrypted in config file as `passwordHash` field
+  - **Decryption**: Passwords decrypted just-in-time before client launch
+  - **Method to decrypt manually** (JavaScript):
+    ```javascript
+    const CryptoJS = require('crypto-js');
+    const ENCRYPTION_KEY = 'ARAGON-LAUNCHER-SECRET-KEY-2025';
+    const encryptedPassword = '...'; // From config file
+    const bytes = CryptoJS.AES.decrypt(encryptedPassword, ENCRYPTION_KEY);
+    const originalPassword = bytes.toString(CryptoJS.enc.Utf8);
+    ```
+  - **Security Note**: This is local-only encryption for convenience. Passwords are never transmitted over network. The encryption prevents plain-text exposure in config files while allowing decryption for client launch.
 - **Features**:
   - Quick Play button launches all enabled characters simultaneously
   - Auto-login for selected character when using main Play button
   - Character selector dropdown with persistent selection
   - Configurable close delay (2-15 seconds) with visual countdown
-  - No console windows on Windows (using CREATE_NO_WINDOW flag)
+  - Console windows visible on Windows (using CREATE_NEW_CONSOLE flag) for debugging
   - Customizable JVM arguments for memory optimization
   - Info tooltips explaining character management and Quick Play functionality
 - **Benefit**: Users can easily switch between characters or launch multiple accounts for efficient gameplay
