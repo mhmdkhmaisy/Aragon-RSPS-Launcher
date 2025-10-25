@@ -12,6 +12,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+**October 25, 2025 - Version 1.4.1** - Console Window Visibility & UI Improvements
+- Changed client launch to use CREATE_NEW_CONSOLE flag on Windows
+- Java client processes now display in their own console window for error debugging
+- Fixed Play button text overflow by reducing letter-spacing (2px → 1px)
+- Improved button text layout with flexbox centering and minimum height
+- Users can now see command-line arguments and client errors locally during testing
+
 **October 23, 2025 - Version 1.4.0** - Settings Redesign & Character Management
 - Redesigned settings modal with tabbed sidebar navigation (General and What's New tabs)
 - Added "What's New?" tab displaying versioned launcher update history
