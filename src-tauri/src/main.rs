@@ -326,7 +326,7 @@ fn get_java_executable() -> String {
 
 // Launch client
 #[tauri::command]
-fn launch_client(username: String, password_hash: String) -> Result<(), String> {
+fn launch_client(username: String, password: String) -> Result<(), String> {
     let client_jar = get_install_dir().join("client.jar");
     
     if !client_jar.exists() {
@@ -346,10 +346,11 @@ fn launch_client(username: String, password_hash: String) -> Result<(), String> 
     args.push(client_jar.to_string_lossy().to_string());
     
     // Add character credentials if provided with -username: and -password: format
+    // Password is decrypted plain text from frontend
     if !username.is_empty() {
         args.push(format!("-username:{}", username));
-        if !password_hash.is_empty() {
-            args.push(format!("-password:{}", password_hash));
+        if !password.is_empty() {
+            args.push(format!("-password:{}", password));
         }
     }
     
@@ -370,24 +371,24 @@ fn launch_client(username: String, password_hash: String) -> Result<(), String> 
     Ok(())
 }
 
+// Struct for decrypted character credentials
+#[derive(Debug, Serialize, Deserialize)]
+struct QuickPlayCredentials {
+    username: String,
+    password: String,
+}
+
 // Launch Quick Play - launches all characters with quickLaunch enabled
 #[tauri::command]
-fn launch_quick_play() -> Result<(), String> {
+fn launch_quick_play(credentials: Vec<QuickPlayCredentials>) -> Result<(), String> {
     let client_jar = get_install_dir().join("client.jar");
     
     if !client_jar.exists() {
         return Err("Client JAR not found".to_string());
     }
     
-    // Get all characters with quick launch enabled
-    let characters = get_characters();
-    let quick_play_chars: Vec<Character> = characters
-        .into_iter()
-        .filter(|c| c.quick_launch)
-        .collect();
-    
-    if quick_play_chars.is_empty() {
-        return Err("No characters with Quick Play enabled".to_string());
+    if credentials.is_empty() {
+        return Err("No characters provided for Quick Play".to_string());
     }
     
     let java_path = get_java_executable();
@@ -395,8 +396,8 @@ fn launch_quick_play() -> Result<(), String> {
     // Use default JVM arguments
     let jvm_args = "-Xmx2G -Xms512M";
     
-    // Launch a client for each quick play character
-    for (i, character) in quick_play_chars.iter().enumerate() {
+    // Launch a client for each character
+    for (i, cred) in credentials.iter().enumerate() {
         let mut args: Vec<String> = jvm_args
             .split_whitespace()
             .map(|s| s.to_string())
@@ -406,8 +407,9 @@ fn launch_quick_play() -> Result<(), String> {
         args.push(client_jar.to_string_lossy().to_string());
         
         // Add character credentials with -username: and -password: format
-        args.push(format!("-username:{}", character.username));
-        args.push(format!("-password:{}", character.password_hash));
+        // Password is decrypted plain text from frontend
+        args.push(format!("-username:{}", cred.username));
+        args.push(format!("-password:{}", cred.password));
         
         let mut command = Command::new(&java_path);
         command.args(&args).current_dir(get_install_dir());
@@ -422,10 +424,10 @@ fn launch_quick_play() -> Result<(), String> {
         
         command.spawn()
             .map_err(|e| format!("Failed to launch client {} for {} with {}: {}", 
-                i + 1, character.username, java_path, e))?;
+                i + 1, cred.username, java_path, e))?;
         
         // Small delay between launches to avoid conflicts
-        if i < quick_play_chars.len() - 1 {
+        if i < credentials.len() - 1 {
             std::thread::sleep(std::time::Duration::from_millis(500));
         }
     }

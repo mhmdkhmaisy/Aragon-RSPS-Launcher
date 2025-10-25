@@ -354,9 +354,14 @@ async function launchGame() {
         const selectedCharacter = characterManager.getSelectedCharacter();
         
         if (isTauri) {
+            // Decrypt password before passing to client
+            const password = selectedCharacter?.passwordHash 
+                ? characterManager.decryptPassword(selectedCharacter.passwordHash)
+                : '';
+            
             await invoke('launch_client', { 
                 username: selectedCharacter?.username || '',
-                passwordHash: selectedCharacter?.passwordHash || ''
+                password: password
             });
             
             playButtonText.textContent = 'LAUNCHED';
@@ -412,10 +417,24 @@ async function launchQuickPlay() {
         quickPlayButton.disabled = true;
         
         if (isTauri) {
-            await invoke('launch_quick_play');
-            
+            // Get all quick play characters and decrypt their passwords
             const characters = characterManager.getAllCharacters();
             const quickPlayChars = characters.filter(c => c.quickLaunch);
+            
+            if (quickPlayChars.length === 0) {
+                await showAlert('No characters with Quick Play enabled', 'Quick Play');
+                quickPlayButton.disabled = false;
+                return;
+            }
+            
+            // Decrypt passwords before passing to Rust
+            const credentials = quickPlayChars.map(char => ({
+                username: char.username,
+                password: characterManager.decryptPassword(char.passwordHash)
+            }));
+            
+            await invoke('launch_quick_play', { credentials });
+            
             updateStatus(`Launched ${quickPlayChars.length} client${quickPlayChars.length > 1 ? 's' : ''} with Quick Play`);
             
             if (config.closeOnLaunch) {

@@ -9,6 +9,7 @@ if (isTauri) {
 
 const STORAGE_KEY = 'aragon_characters';
 const MAX_CHARACTERS = 3;
+const ENCRYPTION_KEY = 'ARAGON-LAUNCHER-SECRET-KEY-2025'; // Encryption salt/key
 
 class CharacterManager {
     constructor() {
@@ -17,8 +18,15 @@ class CharacterManager {
         this.loadCharacters();
     }
 
-    hashPassword(password) {
-        return CryptoJS.SHA256(password).toString();
+    // Encrypt password for storage (AES encryption - can be decrypted)
+    encryptPassword(password) {
+        return CryptoJS.AES.encrypt(password, ENCRYPTION_KEY).toString();
+    }
+
+    // Decrypt password for client launch (reverse of encryption)
+    decryptPassword(encryptedPassword) {
+        const bytes = CryptoJS.AES.decrypt(encryptedPassword, ENCRYPTION_KEY);
+        return bytes.toString(CryptoJS.enc.Utf8);
     }
 
     async loadCharacters() {
@@ -73,7 +81,7 @@ class CharacterManager {
         const character = {
             id: Date.now().toString(),
             username,
-            passwordHash: this.hashPassword(password),
+            passwordHash: this.encryptPassword(password),
             quickLaunch,
             createdAt: new Date().toISOString()
         };
